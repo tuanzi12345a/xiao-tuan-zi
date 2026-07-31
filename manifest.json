@@ -1,0 +1,22 @@
+{
+  "name": "小团子的学习冒险",
+  "short_name": "小团子",
+  "description": "五岁小孩的日常学习计划工作台",
+  "start_url": "/小团子学习冒险.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#FFF5E4",
+  "theme_color": "#FF6B9D",
+  "icons": [
+    {
+      "src": "/icon192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

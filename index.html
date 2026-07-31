@@ -1,0 +1,2929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="小团子学习">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FF6B9D">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon192.png">
+<link rel="apple-touch-icon" href="icon192.png">
+<title>小团子的学习冒险</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --pink:#FF6B9D;--yellow:#FFD93D;--green:#6BCB77;--blue:#4D96FF;--purple:#B983FF;--orange:#FF9F45;
+  --bg1:#FFE0F0;--bg2:#FFF5E4;--bg3:#E4F1FF;--card:#fff;--text:#4A4A4A;--gray:#999;
+  --radius:16px;
+}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 30%,var(--bg3) 100%);min-height:100vh;color:var(--text);padding-bottom:80px}
+/* ===== Tab 导航 ===== */
+.top-bar{text-align:center;padding:16px 16px 8px}
+.top-bar .title{font-size:20px;font-weight:800}
+.top-bar .date{font-size:13px;color:var(--gray);margin-top:4px}
+.tab-bar{display:flex;justify-content:center;gap:4px;padding:8px;background:#fff;border-radius:24px;margin:8px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.tab-btn{flex:1;padding:10px 4px;border:none;background:transparent;border-radius:18px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn.active{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;box-shadow:0 2px 8px rgba(255,107,157,.3)}
+/* ===== 页面容器 ===== */
+.page{display:none;padding:0 16px;animation:fadeIn .3s}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ===== 宠物区域 ===== */
+.pet-stage{background:linear-gradient(180deg,#BFEFFF 0%,#E8F8FF 50%,#FFF8E1 100%);border-radius:24px;padding:20px;text-align:center;position:relative;overflow:hidden;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.pet-stage::before{content:'☁️';position:absolute;top:16px;left:24px;font-size:28px;opacity:.7;animation:floatCloud 8s ease-in-out infinite}
+.pet-stage::after{content:'☁️';position:absolute;top:24px;right:20px;font-size:20px;opacity:.5;animation:floatCloud 6s ease-in-out infinite reverse}
+@keyframes floatCloud{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
+.pet-container{display:inline-flex;align-items:center;gap:20px;position:relative;z-index:2}
+.pet-emoji{font-size:64px;line-height:1.2;transition:all .3s;position:relative;display:inline-block}
+.pet-emoji.bounce{animation:petBounce .5s ease}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1;transform:translateY(-10px) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-25px) scale(.8)}}
+.pet-stage-tag{position:absolute;top:8px;right:12px;background:rgba(255,255,255,.9);padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;color:var(--green);z-index:3}
+.pet-decor{position:absolute;font-size:28px;z-index:3;transition:all .3s}
+.pet-name{font-size:16px;font-weight:700;margin-top:4px;color:var(--text)}
+.pet-level-info{font-size:12px;color:var(--gray);margin-top:2px}
+/* 经验条 */
+.exp-bar-bg{background:rgba(255,255,255,.8);border-radius:12px;height:14px;overflow:hidden;margin:12px auto 0;max-width:240px;position:relative}
+.exp-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),#4CAF50);border-radius:12px;transition:width .5s;width:0%;position:relative}
+.exp-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+/* ===== 食物投喂区 ===== */
+.feed-section{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.feed-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.food-row{display:flex;gap:12px;justify-content:space-around}
+.food-card{text-align:center;cursor:pointer;padding:8px 4px;border-radius:14px;transition:all .2s;width:80px}
+.food-card:active{transform:scale(.9)}
+.food-card .food-icon{font-size:40px;line-height:1.2;position:relative}
+.food-card .food-count{font-size:12px;color:var(--gray);margin-top:4px}
+.food-card .food-name{font-size:11px;color:var(--gray);margin-top:2px}
+.food-card .food-exp{font-size:10px;color:var(--green);margin-top:1px}
+.food-card.disabled{opacity:.4;pointer-events:none}
+/* 飞行食物动画 */
+.flying-food{position:fixed;font-size:40px;z-index:1000;pointer-events:none;transition:all 1.2s cubic-bezier(.5,-.5,.5,1.5)}
+/* ===== 装饰区域 ===== */
+.decor-section{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.decor-title{font-size:14px;font-weight:700;margin-bottom:12px}
+.decor-grid{display:flex;flex-wrap:wrap;gap:8px}
+.decor-item{width:56px;height:56px;border-radius:12px;background:#FAFAFA;border:2px solid #E0E0E0;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:all .15s;position:relative}
+.decor-item:active{transform:scale(.9)}
+.decor-item.equipped{border-color:var(--purple);background:#F3E8FF}
+.decor-item.locked{opacity:.3;pointer-events:none}
+.decor-item.locked::after{content:'🔒';position:absolute;font-size:14px;top:2px;right:4px}
+.decor-item .lock-tag{position:absolute;bottom:0;right:2px;font-size:10px;background:var(--orange);color:#fff;padding:1px 4px;border-radius:4px}
+/* ===== 日历区域 ===== */
+.calendar-section{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.calendar-header h3{font-size:16px}
+.cal-nav-btn{background:#F0F0F0;border:none;width:32px;height:32px;border-radius:8px;font-size:16px;cursor:pointer;color:var(--gray)}
+.cal-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.cal-week-cell{text-align:center;font-size:11px;color:var(--gray);font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-cell{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all .15s;background:#FAFAFA;position:relative;color:var(--text)}
+.cal-cell.today{background:#E4F1FF;font-weight:700;border:2px solid var(--blue)}
+.cal-cell.completed{background:var(--green);color:#fff}
+.cal-cell.completed::before{content:'✓';position:absolute;top:2px;left:4px;font-size:10px}
+.cal-cell.missed{background:#FFE0E0;color:#E88}
+.cal-cell.future{color:#CCC}
+.cal-cell .streak-badge{font-size:9px;position:absolute;bottom:2px}
+.cal-streak-info{text-align:center;margin-top:10px;font-size:13px;color:var(--gray)}
+.cal-streak-info b{color:var(--orange);font-size:16px}
+/* ===== 任务卡片 ===== */
+.section-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.section-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.task-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#FAFAFA;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative}
+.task-item:active{transform:scale(.98)}
+.task-item.done{background:#E8F5E9;opacity:.7}
+.task-item.done .task-name{text-decoration:line-through}
+.task-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.task-info{flex:1;min-width:0}
+.task-name{font-size:15px;font-weight:600}
+.task-detail{font-size:12px;color:var(--gray);margin-top:2px}
+.task-check{width:28px;height:28px;border-radius:50%;border:3px solid #DDD;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:pointer;align-self:center}
+.task-check:active{transform:scale(0.85)}
+.task-item.done .task-check{background:var(--green);border-color:var(--green)}
+.task-item.done .task-check::after{content:'✓';color:#fff;font-size:14px;font-weight:700}
+.task-link-btn{padding:6px 14px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;text-decoration:none;display:inline-block}
+.task-link-btn:active{transform:scale(.95)}
+.task-link-btn:visited{color:#fff}
+.task-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;margin-left:4px;font-weight:600}
+.badge-link{background:var(--blue);color:#fff}
+.badge-game{background:var(--purple);color:#fff}
+.badge-video{background:var(--orange);color:#fff}
+.badge-write{background:var(--green);color:#fff}
+.badge-math{background:var(--pink);color:#fff}
+/* 补打卡提示 */
+.makeup-banner{background:#FFF3CD;border:1px solid #FFE08A;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:#856404;display:flex;align-items:center;gap:8px}
+.makeup-banner button{margin-left:auto;background:var(--orange);color:#fff;border:none;padding:4px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:700}
+/* ===== 英文拼读模块 ===== */
+.eng-section{margin-bottom:8px}
+.eng-letter{font-size:48px;text-align:center;font-weight:900;color:var(--blue);margin:8px 0}
+.eng-word{display:inline-block;padding:4px 12px;border-radius:8px;background:#E4F1FF;margin:4px 4px;font-size:14px;font-weight:600}
+.eng-sentence{text-align:center;font-size:16px;margin:8px 0;color:var(--text);font-weight:600}
+.speak-btn{padding:6px 14px;border-radius:10px;border:none;background:var(--purple);color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.speak-btn:active{transform:scale(.95)}
+/* 英文小动画 */
+.eng-cartoon-box{margin:8px 0;padding:16px 12px;background:linear-gradient(180deg,#E8F4FF 0%,#FFF8E1 100%);border-radius:14px;overflow:hidden;position:relative;min-height:120px;cursor:pointer;border:2px solid #DDEEF6}
+.eng-cartoon-box:active{transform:scale(.98)}
+.cartoon-scene{position:relative;height:100px;display:flex;align-items:flex-end;justify-content:center}
+.cartoon-char{font-size:48px;position:relative;animation:charWalk 3s ease-in-out infinite}
+@keyframes charWalk{0%,100%{transform:translateX(-40px)}50%{transform:translateX(40px)}}
+.cartoon-bubble{position:absolute;top:0;left:50%;transform:translateX(-50%);background:#fff;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.1);animation:bubblePop 3s ease-in-out infinite;max-width:280px}
+@keyframes bubblePop{0%,100%{opacity:0;transform:translateX(-50%) scale(0.8)}20%,80%{opacity:1;transform:translateX(-50%) scale(1)}}
+.cartoon-bubble::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
+.cartoon-ground{position:absolute;bottom:0;left:0;right:0;height:12px;background:linear-gradient(180deg,#8BC34A 0%,#689F38 100%);border-radius:0 0 14px 14px}
+.eng-quiz{margin:8px 0}
+/* 家长设置面板 */
+.parent-setting{background:#F3E8FF;border-radius:12px;padding:12px;margin:8px 0}
+.parent-setting-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.parent-letter-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.parent-letter-btn{aspect-ratio:1;border-radius:8px;border:2px solid #E0E0E0;background:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--text)}
+.parent-letter-btn:active{transform:scale(.9)}
+.parent-letter-btn.selected{border-color:var(--purple);background:var(--purple);color:#fff}
+.parent-hint{font-size:11px;color:#aaa;margin-top:6px}
+.eng-quiz-q{font-size:14px;margin-bottom:8px}
+.eng-quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.eng-quiz-opt{padding:12px;border-radius:10px;border:2px solid #E0E0E0;background:#FAFAFA;text-align:center;font-size:20px;cursor:pointer;transition:all .15s}
+.eng-quiz-opt:active{transform:scale(.95)}
+.eng-quiz-opt.correct{border-color:var(--green);background:#E8F5E9}
+.eng-quiz-opt.wrong{border-color:var(--pink);background:#FFEBEE}
+/* ===== 识字游戏 ===== */
+.chn-game{margin:8px 0;padding:12px;background:#FFF3E0;border-radius:12px}
+.chn-char{font-size:40px;text-align:center;font-weight:900;color:var(--orange);margin:8px 0}
+.chn-match{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.chn-match-opt{padding:12px;border-radius:10px;border:2px solid #E0E0E0;background:#FAFAFA;text-align:center;font-size:16px;cursor:pointer;transition:all .15s}
+.chn-match-opt:active{transform:scale(.95)}
+.chn-match-opt.correct{border-color:var(--green);background:#E8F5E9}
+.chn-match-opt.wrong{border-color:var(--pink);background:#FFEBEE}
+/* ===== 数学题 ===== */
+.math-card{background:#FCE4EC;border-radius:12px;padding:14px;margin:8px 0}
+.math-q{font-size:20px;text-align:center;font-weight:700;color:var(--pink);margin-bottom:8px}
+.math-input{display:flex;justify-content:center;gap:8px;align-items:center}
+.math-input input{width:60px;height:40px;text-align:center;font-size:20px;border:2px solid #E0E0E0;border-radius:10px;outline:none}
+.math-input input:focus{border-color:var(--pink)}
+.math-input button{padding:8px 16px;border-radius:10px;border:none;background:var(--pink);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.math-feedback{text-align:center;font-size:14px;margin-top:6px;min-height:20px}
+/* ===== 通识视频 ===== */
+.video-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:#FAFAFA;margin-bottom:6px;cursor:pointer}
+.video-item:active{transform:scale(.98)}
+.video-thumb{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.video-info{flex:1;min-width:0}
+.video-title{font-size:14px;font-weight:600}
+.video-detail{font-size:12px;color:var(--gray)}
+/* ===== 备忘录 ===== */
+.memo-group{margin-bottom:12px}
+.memo-group-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.memo-group-name{font-size:14px;font-weight:700;color:var(--purple)}
+.memo-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#FAFAFA;margin-bottom:4px;cursor:pointer}
+.memo-item:active{background:#F0F0F0}
+.memo-item.done .memo-text{text-decoration:line-through;color:#CCC}
+.memo-check{width:20px;height:20px;border-radius:6px;border:2px solid #DDD;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.memo-item.done .memo-check{background:var(--green);border-color:var(--green);color:#fff}
+.memo-text{flex:1;font-size:14px}
+.memo-del{color:#E88;font-size:18px;cursor:pointer;opacity:.5}
+.memo-del:active{opacity:1}
+.memo-add-row{display:flex;gap:6px;margin-top:6px}
+.memo-add-row input{flex:1;padding:8px 12px;border-radius:8px;border:2px solid #E0E0E0;font-size:14px;outline:none}
+.memo-add-row input:focus{border-color:var(--purple)}
+.memo-add-row button{padding:8px 14px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.memo-group-add{display:flex;gap:6px;margin-top:12px}
+.memo-group-add input{flex:1;padding:8px 12px;border-radius:8px;border:2px solid #E0E0E0;font-size:14px;outline:none}
+.memo-group-add button{padding:8px 14px;border-radius:8px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+/* ===== 奖励中心 ===== */
+.reward-section{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.reward-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0F0F0}
+.reward-row:last-child{border-bottom:none}
+.reward-label{font-size:14px;color:var(--gray)}
+.reward-value{font-size:16px;font-weight:700}
+/* ===== 庆祝弹窗 ===== */
+.celebrate-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:center;justify-content:center}
+.celebrate-overlay.show{display:flex}
+.celebrate-box{background:#fff;border-radius:24px;padding:32px 24px;text-align:center;max-width:300px;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.celebrate-emoji{font-size:64px;margin-bottom:8px}
+.celebrate-title{font-size:22px;font-weight:800;color:var(--pink);margin-bottom:4px}
+.celebrate-desc{font-size:14px;color:var(--gray);margin-bottom:16px}
+.celebrate-btn{padding:12px 32px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+.confetti{position:fixed;width:10px;height:10px;z-index:9998;pointer-events:none;top:-20px}
+@keyframes confettiFall{to{top:100vh;transform:rotate(720deg);opacity:0}}
+/* 底部安全区 */
+.safe-bottom{height:env(safe-area-inset-bottom,0px)}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="title">🐰 小团子的学习冒险</div>
+  <div class="date" id="todayDate"></div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-page="home">🏠 宠物</button>
+  <button class="tab-btn" data-page="tasks">📚 学习</button>
+  <button class="tab-btn" data-page="calendar">📅 日历</button>
+  <button class="tab-btn" data-page="memo">📝 备忘</button>
+  <button class="tab-btn" data-page="reward">🎁 奖励</button>
+  <button class="tab-btn" data-page="parent">⚙️ 家长</button>
+</div>
+
+<!-- ===== 宠物首页 ===== -->
+<div class="page active" id="page-home">
+  <div class="pet-stage" id="petStage">
+    <div class="pet-stage-tag" id="petStageTag">第1阶段 · 宝宝</div>
+    <div class="pet-name" id="petName">团团 · 汪汪 · 喵喵</div>
+    <div class="pet-level-info" id="petLevelInfo">Lv.1 · 经验 0/100</div>
+    <div class="exp-bar-bg"><div class="exp-bar-fill" id="expBar"></div></div>
+  </div>
+
+  <div class="feed-section">
+    <div class="feed-title">🐾 三只小可爱（点它逗开心，喂食也开心）</div>
+    <div id="petCardsArea"></div>
+  </div>
+
+  <div class="decor-section">
+    <div class="decor-title">🎀 装饰品柜（全打卡完成获得）</div>
+    <div id="decorPetSelector" style="display:flex;gap:8px;margin-bottom:10px;justify-content:center"></div>
+    <div class="decor-grid" id="decorGrid"></div>
+    <div style="font-size:11px;color:#999;margin-top:8px;text-align:center">点击装饰品给选中的宠物装备/卸下</div>
+  </div>
+</div>
+
+<!-- ===== 学习打卡页 ===== -->
+<div class="page" id="page-tasks">
+  <div id="makeupBanner"></div>
+  <div class="section-card" id="taskListArea"></div>
+</div>
+
+<!-- ===== 日历页 ===== -->
+<div class="page" id="page-calendar">
+  <div class="calendar-section">
+    <div class="calendar-header">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <h3 id="calMonthTitle">2026年7月</h3>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="cal-week-row">
+      <div class="cal-week-cell">日</div><div class="cal-week-cell">一</div><div class="cal-week-cell">二</div><div class="cal-week-cell">三</div><div class="cal-week-cell">四</div><div class="cal-week-cell">五</div><div class="cal-week-cell">六</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-streak-info" id="calStreakInfo"></div>
+  </div>
+</div>
+
+<!-- ===== 备忘录页 ===== -->
+<div class="page" id="page-memo">
+  <div class="section-card">
+    <div class="section-title">📝 计划备忘录</div>
+    <div id="memoList"></div>
+    <div class="memo-group-add">
+      <input type="text" id="newGroupName" placeholder="新分组名称">
+      <button onclick="addMemoGroup()">+ 添加分组</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 奖励中心页 ===== -->
+<div class="page" id="page-reward">
+  <div class="reward-section">
+    <div class="section-title">🎁 奖励中心</div>
+    <div class="reward-row"><span class="reward-label">宠物名称</span><span class="reward-value" id="rcPetName">团团</span></div>
+    <div class="reward-row"><span class="reward-label">宠物阶段</span><span class="reward-value" id="rcPetStage">宝宝</span></div>
+    <div class="reward-row"><span class="reward-label">宠物等级</span><span class="reward-value" id="rcPetLevel">Lv.1</span></div>
+    <div class="reward-row"><span class="reward-label">累计经验</span><span class="reward-value" id="rcTotalExp">0</span></div>
+    <div class="reward-row"><span class="reward-label">⭐星星积分</span><span class="reward-value" id="rcStars">0</span></div>
+    <div class="reward-row"><span class="reward-label">🍎苹果库存</span><span class="reward-value" id="rcApple">0</span></div>
+    <div class="reward-row"><span class="reward-label">🥕胡萝卜库存</span><span class="reward-value" id="rcCarrot">0</span></div>
+    <div class="reward-row"><span class="reward-label">🎂蛋糕库存</span><span class="reward-value" id="rcCake">0</span></div>
+    <div class="reward-row"><span class="reward-label">已获装饰</span><span class="reward-value" id="rcDecorCount">0</span></div>
+    <div class="reward-row"><span class="reward-label">连续打卡天数</span><span class="reward-value" id="rcStreak">0</span></div>
+    <div class="reward-row"><span class="reward-label">总打卡天数</span><span class="reward-value" id="rcTotalDays">0</span></div>
+  </div>
+</div>
+
+<!-- ===== 家长设置页 ===== -->
+<div class="page" id="page-parent">
+  <div class="section-card">
+    <div style="font-size:16px;font-weight:800;margin-bottom:12px">👨‍👩‍👧 家长设置</div>
+    
+    <!-- 英文字母设置 -->
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--pink)">🔤 选择今天学习的英文字母</div>
+    <div style="font-size:13px;color:#888;margin-bottom:12px">当前字母：<strong id="curLetterDisplay" style="color:var(--pink);font-size:16px">A</strong></div>
+    <div id="parentLetterGrid" class="parent-letter-grid"></div>
+    
+    <div style="height:1px;background:#eee;margin:20px 0"></div>
+    
+    <!-- 数学难度设置 -->
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--pink)">🔢 数学思维难度设置</div>
+    <div style="font-size:13px;color:#888;margin-bottom:12px">选择加减法运算范围，每天出3道题。当前：<strong id="curMathLevel" style="color:var(--pink);font-size:16px">10以内</strong></div>
+    <div id="mathLevelGrid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+    
+    <div style="height:1px;background:#eee;margin:20px 0"></div>
+    
+    <!-- 汉字字库 - 小羊上山1-4级 -->
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--pink)">📖 小羊上山识字字库（1-4级共205字）</div>
+    <div style="font-size:13px;color:#888;margin-bottom:12px">从下方字库中点选 <strong style="color:var(--pink)">2个字</strong> 作为今天的学习内容。点击字可听发音。已选：<strong id="todayCharCount" style="color:var(--pink)">0</strong> / 2</div>
+    
+    <div id="todayCharSelected" style="background:#FFF5E4;border-radius:12px;padding:12px;margin-bottom:12px"></div>
+    
+    <div id="todayCharPicker" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+    
+    <div style="height:1px;background:#eee;margin:20px 0"></div>
+    
+    <!-- 通识视频选择 -->
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--pink)">📺 通识视频选择（共75个）</div>
+    <div style="font-size:13px;color:#888;margin-bottom:12px">从下方视频中点选 <strong style="color:var(--pink)">2个</strong> 作为今天的学习内容。已选：<strong id="todayVideoCount" style="color:var(--pink)">0</strong> / 2</div>
+    <div id="todayVideoSelected" style="background:#FFF5E4;border-radius:12px;padding:12px;margin-bottom:12px"></div>
+    <div id="todayVideoPicker" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;max-height:400px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- 庆祝弹窗 -->
+<div class="celebrate-overlay" id="celebrateOverlay">
+  <div class="celebrate-box">
+    <div class="celebrate-emoji" id="celebrateEmoji">🎉</div>
+    <div class="celebrate-title" id="celebrateTitle">太棒了！</div>
+    <div class="celebrate-desc" id="celebrateDesc">获得一个苹果！</div>
+    <button class="celebrate-btn" onclick="closeCelebrate()">好的</button>
+  </div>
+</div>
+
+<div class="safe-bottom"></div>
+<audio id="tuanziAudio" preload="auto" style="display:none"></audio>
+
+<script>
+// ===================== 数据层 =====================
+const FOODS = {
+  apple:{icon:'🍎',name:'苹果',exp:10},
+  carrot:{icon:'🥕',name:'胡萝卜',exp:20},
+  cake:{icon:'🎂',name:'蛋糕',exp:50}
+};
+const PETS = [
+  {id:'rabbit',name:'团团',emoji:'🐰',happy:'🥰',superHappy:'🤩',sad:'😢',sound:'叽叽~'},
+  {id:'dog',name:'汪汪',emoji:'🐶',happy:'😍',superHappy:'🤩',sad:'😢',sound:'汪汪~'},
+  {id:'cat',name:'喵喵',emoji:'🐱',happy:'😺',superHappy:'🤩',sad:'😿',sound:'喵~'},
+];
+const PET_STAGES = [
+  {name:'宝宝',minExp:0},
+  {name:'小',minExp:300},
+  {name:'大',minExp:800},
+  {name:'英雄',minExp:1500}
+];
+const ALL_DECORS = [
+  // 帽子类
+  {id:'hat1',icon:'👑',name:'皇冠',cat:'hat'},
+  {id:'hat2',icon:'🎀',name:'蝴蝶结',cat:'hat'},
+  {id:'hat3',icon:'🎩',name:'魔术帽',cat:'hat'},
+  {id:'hat4',icon:'🎓',name:'学士帽',cat:'hat'},
+  {id:'hat5',icon:'🪖',name:'橄榄帽',cat:'hat'},
+  {id:'hat6',icon:'👒',name:'遮阳帽',cat:'hat'},
+  {id:'hat7',icon:'🧢',name:'棒球帽',cat:'hat'},
+  {id:'hat8',icon:'⛑️',name:'安全帽',cat:'hat'},
+  // 眼镜类
+  {id:'glass1',icon:'👓',name:'近视镜',cat:'glass'},
+  {id:'glass2',icon:'🕶️',name:'墨镜',cat:'glass'},
+  {id:'glass3',icon:'🥽',name:'游泳镜',cat:'glass'},
+  {id:'glass4',icon:'🸮',name:'单片镜',cat:'glass'},
+  // 衣服类
+  {id:'clothes1',icon:'👕',name:'小T恤',cat:'clothes'},
+  {id:'clothes2',icon:'🧥',name:'外套',cat:'clothes'},
+  {id:'clothes3',icon:'👗',name:'裙子',cat:'clothes'},
+  {id:'clothes4',icon:'🦺',name:'马甲',cat:'clothes'},
+  {id:'clothes5',icon:'👚',name:'花衬衫',cat:'clothes'},
+  {id:'clothes6',icon:'🥼',name:'白大褂',cat:'clothes'},
+  // 配饰类（拿在手上/挂在身上）
+  {id:'acc1',icon:'🎈',name:'气球',cat:'acc'},
+  {id:'acc2',icon:'🧸',name:'小熊玩偶',cat:'acc'},
+  {id:'acc3',icon:'⭐',name:'星星棒',cat:'acc'},
+  {id:'acc4',icon:'🌈',name:'彩虹',cat:'acc'},
+  {id:'acc5',icon:'🏅',name:'金牌',cat:'acc'},
+  {id:'acc6',icon:'🏆',name:'奖杯',cat:'acc'},
+  {id:'acc7',icon:'💎',name:'宝石',cat:'acc'},
+  {id:'acc8',icon:'🔮',name:'水晶球',cat:'acc'},
+  // 围巾类
+  {id:'scarf1',icon:'🧣',name:'红围巾',cat:'scarf'},
+  {id:'scarf2',icon:'🎀',name:'领结',cat:'scarf'},
+];
+const ENCOURAGE = ['太棒了！','好厉害！','继续加油！','你真聪明！','给你点赞！','棒棒哒！'];
+
+// 周一到周五任务模板
+const WEEKDAY_TASKS = [
+  {id:'zebra',icon:'🦓',name:'斑马思维',detail:'打开斑马AI完成今天课程',type:'link',url:'',color:'#4D96FF',badge:'badge-link',badgeText:'跳转'},
+  {id:'english',icon:'🔤',name:'英文拼读',detail:'自然拼读+单词+跟读+动画+游戏',type:'english',color:'#B983FF',badge:'badge-game',badgeText:'互动'},
+  {id:'chinese',icon:'📖',name:'识字·小羊上山',detail:'本周识字内容+汉字游戏',type:'chinese',color:'#FF9F45',badge:'badge-game',badgeText:'游戏'},
+  {id:'writing',icon:'✏️',name:'幼儿园写字作业',detail:'完成今天写字作业',type:'check',color:'#6BCB77',badge:'badge-write',badgeText:'打勾'},
+  {id:'math',icon:'🔢',name:'数学思维',detail:'加减法3道题（家长可设难度）',type:'math',color:'#FF6B9D',badge:'badge-math',badgeText:'答题'},
+  {id:'science',icon:'🔬',name:'通识科普',detail:'15分钟内科普视频',type:'video',color:'#FFD93D',badge:'badge-video',badgeText:'视频'},
+];
+const WEEKEND_TASKS = [
+  {id:'science',icon:'🔬',name:'通识科普',detail:'周末观看一个15分钟内科普视频',type:'video',color:'#FFD93D',badge:'badge-video',badgeText:'视频'},
+];
+
+// 通识视频库：央视推荐儿童科普动画合集（BV1uK7S6PErj）
+// 已验证前29集为真实科普内容，每集约7-10分钟
+const SCIENCE_VIDEOS = [
+  {icon:'👁️',title:'我们为什么能看见',detail:'人体科学 · 约8分钟',bvid:'BV1uK7S6PErj',page:1},
+  {icon:'👃',title:'为什么我们可以闻到气味',detail:'人体科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:2},
+  {icon:'👂',title:'为什么我们可以听见声音',detail:'人体科学 · 约8分钟',bvid:'BV1uK7S6PErj',page:3},
+  {icon:'🦷',title:'我们为什么会有蛀牙',detail:'健康卫生 · 约8分钟',bvid:'BV1uK7S6PErj',page:4},
+  {icon:'🍽️',title:'我们吃进去的食物去哪里了',detail:'人体科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:5},
+  {icon:'🫁',title:'我们是怎么呼吸的',detail:'人体科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:6},
+  {icon:'🩹',title:'身体是如何止血的',detail:'人体科学 · 约8分钟',bvid:'BV1uK7S6PErj',page:7},
+  {icon:'🍫',title:'巧克力',detail:'食物科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:8},
+  {icon:'🍬',title:'软糖',detail:'食物科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:9},
+  {icon:'🥤',title:'可乐',detail:'食物科学 · 约8分钟',bvid:'BV1uK7S6PErj',page:10},
+  {icon:'🍰',title:'年轮蛋糕',detail:'食物科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:11},
+  {icon:'🥛',title:'酸奶',detail:'食物科学 · 约8分钟',bvid:'BV1uK7S6PErj',page:12},
+  {icon:'✏️',title:'铅笔',detail:'文具科学 · 约8分钟',bvid:'BV1uK7S6PErj',page:13},
+  {icon:'🔥',title:'元素城的重大危机',detail:'化学启蒙 · 约9分钟',bvid:'BV1uK7S6PErj',page:14},
+  {icon:'⚫',title:'无所不能的碳元素',detail:'化学启蒙 · 约11分钟',bvid:'BV1uK7S6PErj',page:15},
+  {icon:'🔴',title:'大明星氧元素',detail:'化学启蒙 · 约12分钟',bvid:'BV1uK7S6PErj',page:16},
+  {icon:'🔵',title:'氮元素和碳元素',detail:'化学启蒙 · 约11分钟',bvid:'BV1uK7S6PErj',page:17},
+  {icon:'🧪',title:'碱金属家族',detail:'化学启蒙 · 约10分钟',bvid:'BV1uK7S6PErj',page:18},
+  {icon:'⚗️',title:'碱土金属家族',detail:'化学启蒙 · 约11分钟',bvid:'BV1uK7S6PErj',page:19},
+  {icon:'🌡️',title:'流动的金属',detail:'化学启蒙 · 约10分钟',bvid:'BV1uK7S6PErj',page:20},
+  {icon:'🎨',title:'艺术大师铜元素',detail:'化学启蒙 · 约11分钟',bvid:'BV1uK7S6PErj',page:21},
+  {icon:'🔬',title:'向神秘微观世界',detail:'微生物 · 约9分钟',bvid:'BV1uK7S6PErj',page:22},
+  {icon:'🦠',title:'微生物成员大不同',detail:'微生物 · 约10分钟',bvid:'BV1uK7S6PErj',page:23},
+  {icon:'🧴',title:'皮肤上的亲密小伙伴',detail:'微生物 · 约9分钟',bvid:'BV1uK7S6PErj',page:24},
+  {icon:'🍎',title:'肚子里的拔河比赛',detail:'微生物 · 约9分钟',bvid:'BV1uK7S6PErj',page:25},
+  {icon:'🤒',title:'揪出致病的罪魁祸首',detail:'健康卫生 · 约8分钟',bvid:'BV1uK7S6PErj',page:26},
+  {icon:'🛡️',title:'人体健康大作战',detail:'健康卫生 · 约9分钟',bvid:'BV1uK7S6PErj',page:27},
+  {icon:'🌱',title:'小生命有大用途',detail:'生物科学 · 约9分钟',bvid:'BV1uK7S6PErj',page:28},
+  {icon:'🌍',title:'地球环境清洁工',detail:'环保科学 · 约10分钟',bvid:'BV1uK7S6PErj',page:29},
+  // 少儿史记科普动画（20集，普通视频可嵌入）
+  {icon:'⚔️',title:'炎黄战蚩尤',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:1},
+  {icon:'👑',title:'帝尧的烦恼',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:2},
+  {icon:'🌊',title:'大禹治水',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:3},
+  {icon:'🛡️',title:'有道伐无道',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:4},
+  {icon:'🔥',title:'烽火戏诸侯',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:5},
+  {icon:'🐎',title:'霸主秦穆公',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:6},
+  {icon:'🏛️',title:'始皇帝灭六国',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:7},
+  {icon:'💊',title:'快去给朕找仙药',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:8},
+  {icon:'😈',title:'大坏蛋当皇帝',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:9},
+  {icon:'🦌',title:'指鹿为马',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:10},
+  {icon:'⚔️',title:'破釜沉舟',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:11},
+  {icon:'📜',title:'约法三章',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:12},
+  {icon:'宴',title:'鸿门宴上捡条命',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:13},
+  {icon:'⚔️',title:'楚霸王的末日',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:14},
+  {icon:'👑',title:'亭长的逆袭人生',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:15},
+  {icon:'👤',title:'我的名字叫刘邦',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:16},
+  {icon:'😄',title:'笑到最后才是胜利',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:17},
+  {icon:'👩',title:'不是女皇胜似女皇',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:18},
+  {icon:'💰',title:'抠门的皇帝',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:19},
+  {icon:'⚔️',title:'七国之乱',detail:'历史启蒙 · 少儿史记',bvid:'BV1YS42197bP',page:20},
+  // DK儿童百科动画（46集，6岁+可嵌入）
+  {icon:'🌍',title:'我们在天空中的位置',detail:'DK百科 · 天文地理',bvid:'BV1xZ7YzeEa4',page:1},
+  {icon:'🌍',title:'我们的地球（上）',detail:'DK百科 · 天文地理',bvid:'BV1xZ7YzeEa4',page:2},
+  {icon:'🌍',title:'我们的地球（下）',detail:'DK百科 · 天文地理',bvid:'BV1xZ7YzeEa4',page:3},
+  {icon:'🌍',title:'地球的外套-大气层',detail:'DK百科 · 天文地理',bvid:'BV1xZ7YzeEa4',page:4},
+  {icon:'🌟',title:'夜幕下的星空',detail:'DK百科 · 天文地理',bvid:'BV1xZ7YzeEa4',page:5},
+  {icon:'🌊',title:'海底世界',detail:'DK百科 · 海洋',bvid:'BV1xZ7YzeEa4',page:6},
+  {icon:'🌋',title:'山脉和火山',detail:'DK百科 · 地质',bvid:'BV1xZ7YzeEa4',page:7},
+  {icon:'🌍',title:'地震',detail:'DK百科 · 地质',bvid:'BV1xZ7YzeEa4',page:8},
+  {icon:'🏜️',title:'干旱的沙漠',detail:'DK百科 · 自然',bvid:'BV1xZ7YzeEa4',page:9},
+  {icon:'🗺️',title:'七大洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:10},
+  {icon:'🌎',title:'北美洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:11},
+  {icon:'🌎',title:'南美洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:12},
+  {icon:'🌍',title:'非洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:13},
+  {icon:'🌍',title:'欧洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:14},
+  {icon:'🌏',title:'亚洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:15},
+  {icon:'🌏',title:'大洋洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:16},
+  {icon:'🧊',title:'南极洲',detail:'DK百科 · 地理',bvid:'BV1xZ7YzeEa4',page:17},
+  {icon:'🦁',title:'什么是动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:18},
+  {icon:'🦕',title:'恐龙统治地球的时代',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:19},
+  {icon:'🐘',title:'强大的哺乳动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:20},
+  {icon:'🐠',title:'五彩缤纷的鱼',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:21},
+  {icon:'🦜',title:'美丽的鸟',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:22},
+  {icon:'🦎',title:'有鳞的爬行动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:23},
+  {icon:'🐸',title:'神奇的两栖动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:24},
+  {icon:'🦋',title:'亮丽的虫子、毛毛虫变蝴蝶',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:25},
+  {icon:'🐧',title:'动物的栖息地、南极和北极',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:26},
+  {icon:'⛰️',title:'我在山上做调查',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:27},
+  {icon:'🐫',title:'沙漠动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:28},
+  {icon:'🐒',title:'灵长类动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:29},
+  {icon:'🐯',title:'大型猫科动物',detail:'DK百科 · 动物',bvid:'BV1xZ7YzeEa4',page:30},
+  {icon:'🍃',title:'食物链',detail:'DK百科 · 自然',bvid:'BV1xZ7YzeEa4',page:31},
+  {icon:'👤',title:'早期人类',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:32},
+  {icon:'👑',title:'法老的时代',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:33},
+  {icon:'🏯',title:'古代中国',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:34},
+  {icon:'🏛️',title:'古罗马人和维京掠夺者',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:35},
+  {icon:'🌽',title:'古代美洲人',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:36},
+  {icon:'🧭',title:'伟大的探险家',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:37},
+  {icon:'💡',title:'重要的发明家',detail:'DK百科 · 历史',bvid:'BV1xZ7YzeEa4',page:38},
+  {icon:'🔬',title:'伟大的科学家',detail:'DK百科 · 科学',bvid:'BV1xZ7YzeEa4',page:39},
+  {icon:'🚀',title:'飞向月球',detail:'DK百科 · 天文',bvid:'BV1xZ7YzeEa4',page:40},
+  {icon:'🧍',title:'人体',detail:'DK百科 · 人体',bvid:'BV1xZ7YzeEa4',page:41},
+  {icon:'🩸',title:'血液',detail:'DK百科 · 人体',bvid:'BV1xZ7YzeEa4',page:42},
+  {icon:'👁️',title:'感官',detail:'DK百科 · 人体',bvid:'BV1xZ7YzeEa4',page:43},
+  {icon:'🍜',title:'美食',detail:'DK百科 · 生活',bvid:'BV1xZ7YzeEa4',page:44},
+  {icon:'⏰',title:'什么是时间',detail:'DK百科 · 生活',bvid:'BV1xZ7YzeEa4',page:45},
+  {icon:'🏥',title:'恢复健康',detail:'DK百科 · 健康',bvid:'BV1xZ7YzeEa4',page:46},
+  // 儿童科普纪录片-宇宙篇（9集，6岁+可嵌入）
+  {icon:'☀️',title:'太阳家族',detail:'宇宙科普 · 太阳系',bvid:'BV1my3J6PE6U',page:1},
+  {icon:'🪐',title:'深入了解太阳系',detail:'宇宙科普 · 太阳系',bvid:'BV1my3J6PE6U',page:2},
+  {icon:'🦕',title:'陨石和恐龙灭绝',detail:'宇宙科普 · 地球历史',bvid:'BV1my3J6PE6U',page:3},
+  {icon:'🌍',title:'我们居住的地球',detail:'宇宙科普 · 地球',bvid:'BV1my3J6PE6U',page:4},
+  {icon:'🌙',title:'认识月球',detail:'宇宙科普 · 月球',bvid:'BV1my3J6PE6U',page:5},
+  {icon:'🌙',title:'观察月相',detail:'宇宙科普 · 月球',bvid:'BV1my3J6PE6U',page:6},
+  {icon:'🪐',title:'水星金星以及火星',detail:'宇宙科普 · 行星',bvid:'BV1my3J6PE6U',page:7},
+  {icon:'🪐',title:'木星与土星',detail:'宇宙科普 · 行星',bvid:'BV1my3J6PE6U',page:8},
+  {icon:'🪐',title:'天王星和海王星',detail:'宇宙科普 · 行星',bvid:'BV1my3J6PE6U',page:9},
+];
+
+// 根据日期获取今日推荐视频索引
+function getTodayVideoIndex(){
+  const d = new Date();
+  const dayIndex = Math.floor(d.getTime() / (1000 * 60 * 60 * 24));
+  return dayIndex % SCIENCE_VIDEOS.length;
+}
+
+// 英文拼读数据（每周更新一字母）
+const ENGLISH_DATA = {
+  'A':{letter:'Aa',words:['Apple','Ant','Arm','Air'],sentence:'Wow! A is for Apple! Yummy yummy in my tummy!',cartoon:'小蚂蚁 Ant 搬着苹果 Apple 往前走，挥挥手说："A for Apple, yum yum!"'},
+  'B':{letter:'Bb',words:['Ball','Bear','Book','Bus'],sentence:'Yay! B is for Bear! Let us go to school together!',cartoon:'小熊 Bear 抱着球 Ball 坐校车 Bus 去上学，说："B for Bear, go go!"'},
+  'C':{letter:'Cc',words:['Cat','Cake','Car','Cow'],sentence:'Meow! C is for Cat! I love eating cake!',cartoon:'小猫 Cat 开着车 Car 去买蛋糕 Cake，说："C for Cat, yum!"'},
+  'D':{letter:'Dd',words:['Dog','Duck','Door','Dad'],sentence:'Woof woof! D is for Dog! Where is Daddy?',cartoon:'小狗 Dog 和鸭子 Duck 一起找爸爸 Dad，说："D for Dog, woof!"'},
+  'E':{letter:'Ee',words:['Egg','Elephant','Eye','Ear'],sentence:'Look! E is for Egg! So big and round!',cartoon:'大象 Elephant 用眼睛 Eye 找鸡蛋 Egg，说："E for Egg, big!"'},
+  'F':{letter:'Ff',words:['Fish','Frog','Flower','Fan'],sentence:'Splish splash! F is for Fish! Swimming in the water!',cartoon:'青蛙 Frog 看着鱼 Fish 游过花朵 Flower，说："F for Fish, swim!"'},
+  'G':{letter:'Gg',words:['Grapes','Goat','Girl','Garden'],sentence:'Mmm! G is for Grapes! So sweet and juicy!',cartoon:'山羊 Goat 和女孩 Girl 在花园 Garden 吃葡萄 Grapes，说："G for Grapes, sweet!"'},
+  'H':{letter:'Hh',words:['Hat','House','Horse','Hand'],sentence:'Neigh! H is for Hat! Put it on my head!',cartoon:'马 Horse 跑到房子 House 前找帽子 Hat，说："H for Hat, on!"'},
+  'I':{letter:'Ii',words:['Ice','Igloo','Ink','Idea'],sentence:'Brrr! I is for Ice! So cold and slippery!',cartoon:'冰屋 Igloo 里有一块冰 Ice，一个好主意 Idea！说："I for Ice, cold!"'},
+  'J':{letter:'Jj',words:['Juice','Jump','Jelly','Jet'],sentence:'Jump jump! J is for Juice! I love to jump and drink!',cartoon:'小朋友 Jump 跳着喝果汁 Juice，飞机 Jet 飞过，说："J for Juice, jump!"'},
+  'K':{letter:'Kk',words:['Kite','Key','King','Knee'],sentence:'Whoosh! K is for Kite! Fly high in the sky!',cartoon:'国王 King 拿着钥匙 Key 放风筝 Kite，说："K for Kite, fly!"'},
+  'L':{letter:'Ll',words:['Lion','Leaf','Leg','Lamp'],sentence:'Roar! L is for Lion! The king of the jungle!',cartoon:'狮子 Lion 踩着树叶 Leaf 跑到灯 Lamp 旁，说："L for Lion, roar!"'},
+  'M':{letter:'Mm',words:['Moon','Monkey','Milk','Mouth'],sentence:'Ooh! M is for Moon! Up up in the sky!',cartoon:'猴子 Monkey 喝着牛奶 Milk 看月亮 Moon，说："M for Moon, up!"'},
+  'N':{letter:'Nn',words:['Nose','Nest','Net','Nut'],sentence:'Sniff sniff! N is for Nest! My cozy little home!',cartoon:'松鼠在窝 Nest 里吃坚果 Nut，鼻子 Nose 动动，说："N for Nest, home!"'},
+  'O':{letter:'Oo',words:['Orange','Owl','Ocean','Open'],sentence:'Hoo hoo! O is for Orange! Open up and taste it!',cartoon:'猫头鹰 Owl 在海边 Ocean 吃橙子 Orange，说："O for Orange, open!"'},
+  'P':{letter:'Pp',words:['Pig','Panda','Pen','Panda'],sentence:'Oink oink! P is for Pig! Let us draw together!',cartoon:'小猪 Pig 和熊猫 Panda 用笔 Pen 画画，说："P for Pig, fun!"'},
+  'Q':{letter:'Qq',words:['Queen','Quiet','Quilt','Quack'],sentence:'Shh! Q is for Queen! Quack quack says the duck!',cartoon:'女王 Queen 盖着被子 Quilt 说安静 Quiet，鸭子说 Quack，说："Q for Queen, shh!"'},
+  'R':{letter:'Rr',words:['Rabbit','Rain','Red','Run'],sentence:'Hop hop! R is for Rabbit! Run run in the rain!',cartoon:'兔子 Rabbit 在红 Red 雨中跑 Run，说："R for Rabbit, run!"'},
+  'S':{letter:'Ss',words:['Sun','Star','Snake','Swim'],sentence:'Sizzle! S is for Sun! Shine bright like a star!',cartoon:'蛇 Snake 在太阳 Sun 下看星星 Star，说："S for Sun, shine!"'},
+  'T':{letter:'Tt',words:['Tiger','Tree','Train','Toy'],sentence:'Grrr! T is for Tiger! Choo choo on the train!',cartoon:'老虎 Tiger 坐火车 Train 看树 Tree，玩玩具 Toy，说："T for Tiger, go!"'},
+  'U':{letter:'Uu',words:['Umbrella','Up','Uncle','Unicorn'],sentence:'Sparkle! U is for Umbrella! Up up and away!',cartoon:'独角兽 Unicorn 撑着伞 Umbrella 往上 Up 看，说："U for Umbrella, up!"'},
+  'V':{letter:'Vv',words:['Van','Violin','Vegetable','Vest'],sentence:'Vroom vroom! V is for Van! Let us play the violin!',cartoon:'叔叔穿马甲 Vest 开货车 Van 运蔬菜 Vegetable，拉小提琴 Violin，说："V for Van, vroom!"'},
+  'W':{letter:'Ww',words:['Water','Whale','Wind','Wing'],sentence:'Whoosh! W is for Water! The whale loves to splash!',cartoon:'鲸鱼 Whale 在水 Water 里游，翅膀 Wing 飞过有风 Wind，说："W for Whale, splash!"'},
+  'X':{letter:'Xx',words:['Box','Fox','Six','X-ray'],sentence:'Tada! X is for Fox! Jump in the box!',cartoon:'狐狸 Fox 在盒子 Box 里数六 Six，拍X光 X-ray，说："X for Fox, box!"'},
+  'Y':{letter:'Yy',words:['Yellow','Yo-yo','Yogurt','Yawn'],sentence:'Yawn! Y is for Yellow! Let us play yo-yo!',cartoon:'小朋友玩溜溜球 Yo-yo，吃酸奶 Yogurt，打哈欠 Yawn，说："Y for Yellow, yo!"'},
+  'Z':{letter:'Zz',words:['Zebra','Zoo','Zero','Zip'],sentence:'Zoom! Z is for Zebra! Let us go to the zoo!',cartoon:'斑马 Zebra 去动物园 Zoo 数零 Zero，拉拉链 Zip，说："Z for Zebra, zoo!"'},
+};
+
+// 识字内容：小羊上山第1-4级共240字
+// 第1级60字：一二三四五六七八九十两只头又了不大小上下多少白天云山太阳月亮星马牛羊兔虫鸟花草树地吃看走笑来飞爱是跑跳高兴快乐好的爸妈我
+// 第2级60字：出入中天水火鱼木车花白雨风狗猫球帽子衣裤鞋袜河海开关闭灯坐站听见说读写打拍拉去找没了到里前后上下外左右给回拿放怕哭笑冷热长
+// 第3级60字：男女老少青红绿蓝黑黄紫粉灰色金银铁铜石沙泥圆方尖直弯高低长短粗细新旧远近多少轻重快慢早晚日夜明暗冷暖软硬干净脏乱好坏美丑
+// 第4级60字：学校老师同学朋友姐妹兄弟爷奶爸妈哥你他她们的家门窗户屋顶墙地板路桥船岛城乡村野林湖海洋山田地河溪石洞沙草树花叶果根
+const XIAOYANG_L1 = '一二三四五六七八九十两只头又了不大小上下多少白天云山太阳月亮星马牛羊兔虫鸟花草树地吃看走笑来飞爱是跑跳高兴快乐好的爸妈我';
+const XIAOYANG_L2 = '出入中天水火鱼木车花白雨风狗猫球帽子衣裤鞋袜河海开关闭灯坐站听见说读写打拍拉去找没到里前后外左右给回拿放怕哭冷热长短';
+const XIAOYANG_L3 = '男女老少青红绿蓝黑黄紫粉色金银铁铜石沙泥圆方直弯高低长短粗细新旧远近轻重快早晚日夜明暗冷暖软硬干净脏乱好坏美丑';
+const XIAOYANG_L4 = '学校老师同学朋友姐妹兄弟爷奶爸妈哥你他她们的家门窗户屋顶墙地板路桥船岛城乡村野林湖海洋田河溪石洞沙草树花叶果根';
+const XIAOYANG_ALL = XIAOYANG_L1 + XIAOYANG_L2 + XIAOYANG_L3 + XIAOYANG_L4;
+
+const CHINESE_DATA = {
+  chars: XIAOYANG_ALL.split('').map(function(c){
+    return {char:c, pinyin:''};
+  })
+};
+
+// 汉字象形/卡通数据（小羊上山常见字）
+const CHAR_PICTOGRAM = {
+  '大':{emoji:'🧍',desc:'一个人张开双臂双腿，表示"大"'},
+  '小':{emoji:'🤏',desc:'用手捏一点点，表示"小"'},
+  '上':{emoji:'⬆️',desc:'一条横线上面加一点，表示"上方"'},
+  '下':{emoji:'⬇️',desc:'一条横线下面加一点，表示"下方"'},
+  '人':{emoji:'🚶',desc:'一个人侧身走路的样子'},
+  '口':{emoji:'👄',desc:'张开的嘴巴形状'},
+  '手':{emoji:'✋',desc:'五根手指张开的手掌'},
+  '目':{emoji:'👁️',desc:'眼睛的形状，中间有眼珠'},
+  '日':{emoji:'☀️',desc:'太阳是圆圆的，中间一点'},
+  '月':{emoji:'🌙',desc:'弯弯的月亮形状'},
+  '木':{emoji:'🌳',desc:'一棵树，上有枝下有根'},
+  '林':{emoji:'🌲',desc:'两棵树并排，表示树林'},
+  '水':{emoji:'💧',desc:'流动的水波纹'},
+  '火':{emoji:'🔥',desc:'跳跃的火焰形状'},
+  '山':{emoji:'⛰️',desc:'三个山峰连在一起'},
+  '石':{emoji:'🪨',desc:'山崖下掉下来的石头'},
+  '田':{emoji:'🌾',desc:'分成四块的农田'},
+  '天':{emoji:'🌤️',desc:'人头上面的天空'},
+  '土':{emoji:'🟫',desc:'地面上堆起一堆土'},
+  '王':{emoji:'👑',desc:'头戴王冠的国王'},
+  '中':{emoji:'🎯',desc:'中间被一支箭射穿'},
+  '开':{emoji:'🔓',desc:'双手把门推开'},
+  '心':{emoji:'❤️',desc:'心脏的形状'},
+  '女':{emoji:'👩',desc:'女子跪坐的样子'},
+  '子':{emoji:'👶',desc:'婴儿包在襁褓里'},
+  '白':{emoji:'⬜',desc:'大拇指表示白色'},
+  '红':{emoji:'🔴',desc:'红色的丝线'},
+  '花':{emoji:'🌸',desc:'开满花朵的植物'},
+  '草':{emoji:'🌿',desc:'刚长出来的小草'},
+  '鸟':{emoji:'🐦',desc:'一只鸟的侧影'},
+  '马':{emoji:'🐴',desc:'马的象形，有鬃毛和四腿'},
+  '鱼':{emoji:'🐟',desc:'鱼的形状，有鳍有尾'},
+  '虫':{emoji:'🐛',desc:'一条蠕动的虫子'},
+  '云':{emoji:'☁️',desc:'天上的云朵形状'},
+  '雨':{emoji:'🌧️',desc:'天空中落下水滴'},
+  '风':{emoji:'🌬️',desc:'风吹动的样子'},
+  '了':{emoji:'✅',desc:'小手一挥，事情完成，表示"了"'},
+  '高':{emoji:'🏢',desc:'高高的楼房，向上伸展'},
+  '来':{emoji:'🏃',desc:'一个人朝这边走过来'},
+  '去':{emoji:'🚶‍♂️',desc:'一个人转身离开'},
+  '走':{emoji:'🚶',desc:'迈开双腿向前走路'},
+  '跑':{emoji:'🏃',desc:'迈开大步快速奔跑'},
+  '飞':{emoji:'🕊️',desc:'小鸟张开翅膀飞翔'},
+  '看':{emoji:'👀',desc:'把手放在眼睛上方眺望'},
+  '说':{emoji:'💬',desc:'一张嘴正在说话'},
+  '话':{emoji:'🗣️',desc:'从嘴里说出话来'},
+  '爱':{emoji:'🤗',desc:'张开双臂拥抱，表示爱'},
+  '多':{emoji:'📦',desc:'两个相同的东西放在一起，表示很多'},
+  '爸':{emoji:'👨',desc:'爸爸'},
+  '妈':{emoji:'👩',desc:'妈妈'},
+  '爷':{emoji:'👴',desc:'爷爷'},
+  '奶':{emoji:'👵',desc:'奶奶'},
+  '哥':{emoji:'👦',desc:'哥哥'},
+  '姐':{emoji:'👧',desc:'姐姐'},
+  '弟':{emoji:'👦',desc:'弟弟'},
+  '妹':{emoji:'👧',desc:'妹妹'},
+  '我':{emoji:'🙋',desc:'用手指着自己'},
+  '你':{emoji:'👉',desc:'用手指着对方'},
+  '他':{emoji:'🧍‍♂️',desc:'一个男孩子'},
+  '她':{emoji:'🧍‍♀️',desc:'一个女孩子'},
+  '们':{emoji:'👥',desc:'几个人站在一起'},
+  '的':{emoji:'🎯',desc:'目标明确，表示所属'},
+  '一':{emoji:'1️⃣',desc:'一根横线表示数字一'},
+  '二':{emoji:'2️⃣',desc:'两根横线表示数字二'},
+  '三':{emoji:'3️⃣',desc:'三根横线表示数字三'},
+  '四':{emoji:'4️⃣',desc:'四方的形状'},
+  '五':{emoji:'5️⃣',desc:'手掌的五根手指'},
+  '六':{emoji:'6️⃣',desc:'六个点组成的形状'},
+  '七':{emoji:'7️⃣',desc:'横竖交叉的形状'},
+  '八':{emoji:'8️⃣',desc:'像两个人分开站立'},
+  '九':{emoji:'9️⃣',desc:'弯曲的线条'},
+  '十':{emoji:'🔟',desc:'一横一竖交叉'},
+};
+
+// 获取汉字象形数据，如果没有则按部首/规则返回默认
+function getCharPictogram(char){
+  if(CHAR_PICTOGRAM[char]) return CHAR_PICTOGRAM[char];
+  return getCharPictogramFallback(char);
+}
+
+// 基于部首或字形的默认象形
+function getCharPictogramFallback(char){
+  // 部首映射（用字符串包含代替正则，避免语法问题）
+  var radicals = [
+    {chars:'木本末未札术朱朴机朵', emoji:'🌳', desc:'像一棵树的形状'},
+    {chars:'水氵永汁汗江河流海活洋洗浅浇', emoji:'💧', desc:'像流动的水'},
+    {chars:'火灬灯灰炒炸炮烧烫煮热然照', emoji:'🔥', desc:'像燃烧的火焰'},
+    {chars:'土地坡城堆填境坏块坛址', emoji:'🟫', desc:'像土地或泥土'},
+    {chars:'山口巾乡夕夂', emoji:'⛰️', desc:'像山的轮廓'},
+    {chars:'石础破研砖砸碗确磁', emoji:'🪨', desc:'像坚硬的石头'},
+    {chars:'田由甲申电男甸界留略畔', emoji:'🌾', desc:'像一块农田'},
+    {chars:'口叫吃吐吓吗呢哦啊喝咬', emoji:'👄', desc:'像张开的嘴巴'},
+    {chars:'目眼睛盯盼看相省睡眨', emoji:'👁️', desc:'像眼睛的形状'},
+    {chars:'心忄忆忙快怕怪恨恩息您情', emoji:'❤️', desc:'像心脏的形状'},
+    {chars:'手扌打扒扔托扛扣扫找把批', emoji:'✋', desc:'像一只手'},
+    {chars:'足跑跳踢踏踩路跟', emoji:'🦶', desc:'像一只脚'},
+    {chars:'讠谁话语说课请讲讨论认', emoji:'💬', desc:'像说话的样子'},
+    {chars:'女她好妈姐妹奶姑娘婆姨', emoji:'👩', desc:'像一位女子'},
+    {chars:'亻你他伙伴倒位住停做像', emoji:'🚶', desc:'像一个人'},
+    {chars:'宀宝安家客室宫害寂寄', emoji:'🏠', desc:'像一座房子'},
+    {chars:'艹花草苗苦茄茶荷菜落莲', emoji:'🌿', desc:'像一棵小草'},
+    {chars:'虫蚂蚁蝴蜻蜜虾蛙蛇蜂', emoji:'🐛', desc:'像一条小虫'},
+    {chars:'鸟鸡鸭鹅鹊鸽鸦', emoji:'🐦', desc:'像一只鸟'},
+    {chars:'鱼鲜鲤鲸鲨鲫', emoji:'🐟', desc:'像一条鱼'},
+    {chars:'马骑骆驱驶驴', emoji:'🐴', desc:'像一匹马'},
+    {chars:'犭狗狼狐猫猴猪', emoji:'🐕', desc:'像一只动物'},
+    {chars:'钅铁铜钱银针钢铃', emoji:'🔩', desc:'像金属器物'},
+    {chars:'王玉玩珍珠现球', emoji:'👑', desc:'像珍贵的玉石'},
+    {chars:'衣被袄裤裙袜袋装', emoji:'👕', desc:'像一件衣服'},
+    {chars:'食饣饭饮饱饿饺饼餐馆', emoji:'🍚', desc:'和食物有关'},
+    {chars:'日明昨晚晒晴时星春', emoji:'☀️', desc:'和太阳有关'},
+    {chars:'月明有期朦胧', emoji:'🌙', desc:'和月亮有关'},
+    {chars:'雨雪霜雾露雹雷', emoji:'🌧️', desc:'和天气有关'},
+    {chars:'风飘飞', emoji:'🌬️', desc:'像风吹动的样子'},
+    {chars:'车轿轮转轻较', emoji:'🚗', desc:'像一辆车'},
+    {chars:'门闪闭问间闹闻', emoji:'🚪', desc:'像一扇门'},
+    {chars:'刀刂刃切分召初利刻刷', emoji:'🔪', desc:'像一把刀'},
+  ];
+  
+  for(var i=0; i<radicals.length; i++){
+    if(radicals[i].chars.indexOf(char) !== -1){
+      return {emoji:radicals[i].emoji, desc:radicals[i].desc};
+    }
+  }
+  
+  // 完全匹配不到，返回通用学习图标
+  return {emoji:'📖', desc:'这个字真有意思，一起来记住它'};
+}
+
+// ===================== 状态管理 =====================
+let state = {
+  petName: '团团',
+  totalExp: 0,
+  stars: 0,
+  // 每只宠物独立的食物
+  foods: {
+    rabbit: {apple:2, carrot:1, cake:0},
+    dog: {apple:2, carrot:1, cake:0},
+    cat: {apple:2, carrot:1, cake:0},
+  },
+  decors: [],
+  // 每只宠物独立装备的装饰品 {petId: [decorId, ...]}
+  petDecors: {rabbit:[], dog:[], cat:[]},
+  // 当前选中的宠物（用于装饰品柜中选择给谁装备）
+  selectedDecorPet: 'rabbit',
+  // 宠物心情: {petId: {mood: 'normal|happy|superHappy|sad', timer: timestamp}}
+  petMoods: {},
+  // 今天是否已显示全部打卡视频奖励
+  allDoneVideoShown: false,
+  // 打卡记录 {date: {taskId: true/false}}
+  taskRecords: {},
+  // 补打卡记录
+  makeupDates: {},
+  // 备忘录
+  memos: [
+    {id:'g1',name:'本周计划',items:[
+      {id:'i1',text:'周日前更新小羊上山识字内容',done:false},
+      {id:'i2',text:'准备好本周英文拼读字母',done:false},
+    ]},
+    {id:'g2',name:'生活提醒',items:[
+      {id:'i3',text:'周三带手工作品',done:false},
+      {id:'i4',text:'周五穿校服',done:false},
+    ]},
+  ],
+  // 每周英文字母索引
+  currentLetterIdx: 0,
+  // 日历当前显示月份
+  calYear: 0,
+  calMonth: 0,
+  // 数学题 - 每天3道
+  currentMathQs: null,
+  mathQIdx: 0,
+  mathDone: 0,
+};
+
+function saveState(){
+  localStorage.setItem('tuanzi_state', JSON.stringify(state));
+}
+function loadState(){
+  const s = localStorage.getItem('tuanzi_state');
+  if(s){
+    try{
+      const loaded = JSON.parse(s);
+      state = Object.assign(state, loaded);
+    }catch(e){}
+  }
+  const now = new Date();
+  state.calYear = now.getFullYear();
+  state.calMonth = now.getMonth();
+  // 英文字母固定从A开始（索引0）
+  state.currentLetterIdx = 0;
+  // 确保petDecors每只宠物都有
+  if(!state.petDecors) state.petDecors = {};
+  PETS.forEach(function(p){
+    if(!state.petDecors[p.id]) state.petDecors[p.id] = [];
+  });
+  if(!state.selectedDecorPet) state.selectedDecorPet = PETS[0].id;
+}
+
+// ===================== 日期工具 =====================
+function getDateKey(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function todayKey(){ return getDateKey(new Date()); }
+function getDayOfWeek(d){ return d.getDay(); }
+
+// ===================== 宠物系统 =====================
+function getPetStage(){
+  let stage = 0;
+  for(let i=0; i<PET_STAGES.length; i++){
+    if(state.totalExp >= PET_STAGES[i].minExp) stage = i;
+  }
+  return stage;
+}
+function getPetLevel(){
+  // 100exp per level within current stage
+  const stage = getPetStage();
+  const stageStart = PET_STAGES[stage].minExp;
+  const nextStage = stage < PET_STAGES.length-1 ? PET_STAGES[stage+1].minExp : stageStart + 500;
+  const inStageExp = state.totalExp - stageStart;
+  const stageRange = nextStage - stageStart;
+  const levelInStage = Math.floor(inStageExp / (stageRange/5)) + 1;
+  const expInLevel = inStageExp % (stageRange/5);
+  const expMax = stageRange/5;
+  return {stage, level:stage*5+levelInStage, expInLevel, expMax, stageStart, nextStage, inStageExp, stageRange};
+}
+function getPetMood(petId){
+  // 先检查是否超过2天没打卡 → 伤心
+  if(isPetSad()) return 'sad';
+  var moods = state.petMoods || {};
+  var m = moods[petId];
+  if(!m) return 'normal';
+  var now = Date.now();
+  if(now - m.timer > 5000) return 'normal';
+  return m.mood;
+}
+
+// 检查是否超过2天没打卡
+function isPetSad(){
+  var records = state.taskRecords || {};
+  var today = new Date();
+  var lastCheckin = null;
+  // 找最近一次打卡日期
+  for(var i=0; i<=3; i++){
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    var key = getDateKey(d);
+    if(records[key]){
+      var rec = records[key];
+      // 至少完成一个任务算打卡
+      for(var tid in rec){
+        if(rec[tid]) { lastCheckin = key; break; }
+      }
+    }
+    if(lastCheckin) break;
+  }
+  if(!lastCheckin){
+    // 从来没打过卡
+    return Object.keys(records).length === 0 ? false : true;
+  }
+  // 计算距离今天多少天
+  var lastDate = new Date(today);
+  for(var i=0; i<=5; i++){
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    if(getDateKey(d) === lastCheckin){
+      return i > 2; // 超过2天
+    }
+  }
+  return false;
+}
+
+function setPetMood(petId, mood){
+  if(!state.petMoods) state.petMoods = {};
+  state.petMoods[petId] = {mood:mood, timer:Date.now()};
+  saveState();
+}
+
+// 检查超过2天没打卡
+function checkPetSad(){
+  return isPetSad();
+}
+
+// 获取宠物表情
+function getPetEmoji(petId){
+  var pet = PETS.find(function(p){return p.id === petId;});
+  if(!pet) return '❓';
+  var mood = getPetMood(petId);
+  if(mood === 'sad') return pet.sad;
+  if(mood === 'superHappy') return pet.superHappy;
+  if(mood === 'happy') return pet.happy;
+  return pet.emoji;
+}
+
+// 获取宠物叫声
+function playPetSound(petId){
+  var pet = PETS.find(function(p){return p.id === petId;});
+  if(!pet) return;
+  var sound = pet.sound;
+  
+  // 方案1：Web Speech API（最可靠，不受网络限制）
+  if('speechSynthesis' in window){
+    var u = new SpeechSynthesisUtterance(sound);
+    u.lang = 'zh-CN';
+    u.rate = 1.4;
+    u.pitch = 1.6;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+  
+  // 方案2：同时尝试百度TTS
+  var url = 'https://fanyi.baidu.com/gettts?lan=zh&text=' + encodeURIComponent(sound) + '&spd=4&source=web';
+  var tag = document.getElementById('petSoundAudio');
+  if(!tag){
+    tag = document.createElement('audio');
+    tag.id = 'petSoundAudio';
+    tag.preload = 'auto';
+    document.body.appendChild(tag);
+  }
+  tag.src = url;
+  tag.play().catch(function(){});
+}
+
+function renderPet(){
+  const lv = getPetLevel();
+  const stage = PET_STAGES[lv.stage];
+  var nameDisplay = PETS.map(function(p){return p.name;}).join(' · ');
+  document.getElementById('petName').textContent = nameDisplay;
+  document.getElementById('petStageTag').textContent = '第' + (lv.stage+1) + '阶段 · ' + stage.name;
+  document.getElementById('petLevelInfo').textContent = 'Lv.' + lv.level + ' · 经验 ' + Math.floor(lv.expInLevel) + '/' + Math.floor(lv.expMax);
+  const pct = (lv.expInLevel / lv.expMax) * 100;
+  document.getElementById('expBar').style.width = pct + '%';
+  renderPetCards();
+}
+
+// 渲染三只宠物卡片
+function renderPetCards(){
+  var area = document.getElementById('petCardsArea');
+  if(!area) return;
+  var sad = checkPetSad();
+  
+  area.innerHTML = '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px">' +
+    PETS.map(function(pet, idx){
+      var mood = getPetMood(pet.id);
+      var emoji = getPetEmoji(pet.id);
+      var foods = state.foods[pet.id] || {};
+      var totalFood = (foods.apple||0) + (foods.carrot||0) + (foods.cake||0);
+      var moodText;
+      if(mood === 'sad') moodText = '😢 好伤心，快来学习吧~';
+      else if(mood === 'superHappy') moodText = '🤩 超开心！';
+      else if(mood === 'happy') moodText = '😊 开心~';
+      else moodText = '等你来陪我~';
+      
+      // 获取这只宠物装备的装饰品
+      var decors = getPetDecors(pet.id);
+      // 按类别分类，定位到不同位置
+      var hatDecor = decors.find(function(d){return d.cat === 'hat';});
+      var glassDecor = decors.find(function(d){return d.cat === 'glass';});
+      var clothesDecor = decors.find(function(d){return d.cat === 'clothes';});
+      var scarfDecor = decors.find(function(d){return d.cat === 'scarf';});
+      var accDecor = decors.find(function(d){return d.cat === 'acc';});
+      
+      // 构建装饰品HTML（绝对定位在宠物emoji周围）
+      var decorHtml = '';
+      if(hatDecor) decorHtml += '<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:30px;z-index:5">' + hatDecor.icon + '</div>';
+      if(glassDecor) decorHtml += '<div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:22px;z-index:5">' + glassDecor.icon + '</div>';
+      if(scarfDecor) decorHtml += '<div style="position:absolute;top:42px;left:50%;transform:translateX(-50%);font-size:20px;z-index:5">' + scarfDecor.icon + '</div>';
+      if(clothesDecor) decorHtml += '<div style="position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font-size:24px;z-index:5">' + clothesDecor.icon + '</div>';
+      if(accDecor) decorHtml += '<div style="position:absolute;top:20px;right:-8px;font-size:24px;z-index:5">' + accDecor.icon + '</div>';
+      
+      return '<div style="flex:1;min-width:140px;max-width:200px;background:linear-gradient(135deg,' + 
+        (mood === 'sad' ? '#E0E0E0,#F5F5F5' : '#FFF9E6,#FFE8F0') + 
+        ');border-radius:16px;padding:14px;text-align:center;position:relative">' +
+        '<div id="petCard' + idx + '" onclick="petClick(\'' + pet.id + '\',' + idx + ')" style="font-size:56px;cursor:pointer;transition:all .3s;display:inline-block;line-height:1.2;position:relative;padding:8px 12px">' + 
+          decorHtml + emoji +
+        '</div>' +
+        '<div style="font-size:15px;font-weight:800;color:#333;margin-top:4px">' + pet.name + '</div>' +
+        '<div style="font-size:11px;color:' + (mood === 'sad' ? '#999' : 'var(--pink)') + ';margin:2px 0">' + moodText + '</div>' +
+        '<div style="border-top:1px dashed #E0C0CB;margin:8px 0;padding-top:6px">' +
+          '<div style="font-size:11px;color:#888;margin-bottom:4px">🍖 食物：' + totalFood + '</div>' +
+          Object.keys(FOODS).map(function(key){
+            var f = FOODS[key];
+            var cnt = foods[key] || 0;
+            return '<div onclick="event.stopPropagation();feedPet(\'' + pet.id + '\',\'' + key + '\')" style="display:inline-flex;flex-direction:column;align-items:center;gap:1px;margin:2px;padding:4px 8px;border-radius:8px;background:' + (cnt > 0 ? '#fff' : '#eee') + ';cursor:' + (cnt > 0 ? 'pointer' : 'not-allowed') + ';opacity:' + (cnt > 0 ? '1' : '0.5') + '">' +
+              '<span style="font-size:20px">' + f.icon + '</span>' +
+              '<span style="font-size:10px;color:#999">×' + cnt + '</span>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        (sad ? '<div style="font-size:10px;color:#FF6B9D;margin-top:4px">💔 快去学习让小动物开心！</div>' : '') +
+      '</div>';
+    }).join('') +
+  '</div>';
+}
+
+// 点击宠物
+function petClick(petId, idx){
+  var mood = getPetMood(petId);
+  // 伤心状态下点也只稍微开心
+  if(mood === 'sad'){
+    setPetMood(petId, 'happy');
+  } else if(mood === 'normal'){
+    setPetMood(petId, 'happy');
+  } else if(mood === 'happy'){
+    setPetMood(petId, 'superHappy');
+  } else {
+    setPetMood(petId, 'superHappy');
+  }
+  
+  var pet = PETS.find(function(p){return p.id === petId;});
+  if(pet){
+    // 发出叫声
+    playPetSound(petId);
+    // 显示气泡
+    showPetBubble(idx, pet.sound);
+  }
+  
+  renderPetCards();
+  
+  // 5秒后恢复
+  setTimeout(function(){ renderPetCards(); }, 5100);
+}
+
+// 显示宠物叫声气泡
+function showPetBubble(idx, text){
+  var el = document.getElementById('petCard' + idx);
+  if(!el) return;
+  var old = el.parentElement.querySelector('.pet-bubble');
+  if(old) old.remove();
+  var bubble = document.createElement('div');
+  bubble.className = 'pet-bubble';
+  bubble.textContent = text;
+  bubble.style.cssText = 'position:absolute;background:#fff;padding:4px 12px;border-radius:12px;font-size:15px;font-weight:700;color:#FF6B9D;box-shadow:0 2px 8px rgba(0,0,0,.15);white-space:nowrap;animation:fadeUp 2s ease forwards;pointer-events:none;z-index:10';
+  bubble.style.left = '50%';
+  bubble.style.top = '-10px';
+  bubble.style.transform = 'translateX(-50%)';
+  el.parentElement.appendChild(bubble);
+  setTimeout(function(){ bubble.remove(); }, 2000);
+}
+
+// 食物渲染（已整合到宠物卡片中，此函数保留兼容）
+function renderFood(){
+  renderPetCards();
+}
+
+// 喂养宠物
+function feedPet(petId, key){
+  var petFoods = state.foods[petId] || {};
+  if(petFoods[key] <= 0) return;
+  const f = FOODS[key];
+  petFoods[key]--;
+  state.foods[petId] = petFoods;
+  
+  // 食物飞行动画
+  var petEl = document.getElementById('petCard' + PETS.findIndex(function(p){return p.id === petId;}));
+  if(petEl){
+    var petRect = petEl.getBoundingClientRect();
+    var flying = document.createElement('div');
+    flying.className = 'flying-food';
+    flying.textContent = f.icon;
+    flying.style.left = (petRect.left) + 'px';
+    flying.style.top = (petRect.top) + 'px';
+    flying.style.opacity = '0';
+    document.body.appendChild(flying);
+    requestAnimationFrame(() => {
+      flying.style.opacity = '1';
+      flying.style.left = (petRect.left + petRect.width/2 - 20) + 'px';
+      flying.style.top = (petRect.top + petRect.height/2 - 20) + 'px';
+      flying.style.transform = 'scale(0.3)';
+    });
+    setTimeout(() => {
+      flying.remove();
+      // 宠物变开心
+      setPetMood(petId, 'superHappy');
+      var oldStage = getPetStage();
+      state.totalExp += f.exp;
+      var newStage = getPetStage();
+      // 发出叫声
+      playPetSound(petId);
+      var idx = PETS.findIndex(function(p){return p.id === petId;});
+      showPetBubble(idx, '好好吃！');
+      if(newStage > oldStage){
+        showCelebrate('🎉', '宠物长大了！', '恭喜！成长到了「' + PET_STAGES[newStage].name + '」阶段！');
+      }
+      saveState();
+      renderPet();
+      renderPetCards();
+      renderReward();
+      setTimeout(function(){ renderPetCards(); }, 5100);
+    }, 800);
+  } else {
+    state.totalExp += f.exp;
+    setPetMood(petId, 'superHappy');
+    saveState();
+    renderPet();
+    renderPetCards();
+    renderReward();
+    setTimeout(function(){ renderPetCards(); }, 5100);
+  }
+}
+
+// 装饰品渲染
+function renderDecors(){
+  // 渲染宠物选择器
+  var sel = document.getElementById('decorPetSelector');
+  if(sel){
+    sel.innerHTML = PETS.map(function(p){
+      var active = state.selectedDecorPet === p.id;
+      return '<div onclick="selectDecorPet(\'' + p.id + '\')" style="display:flex;align-items:center;gap:4px;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s;background:' + (active ? 'var(--pink)' : '#F5F5F5') + ';color:' + (active ? '#fff' : '#666') + '">' +
+        '<span style="font-size:20px">' + p.emoji + '</span>' + p.name +
+      '</div>';
+    }).join('');
+  }
+
+  var grid = document.getElementById('decorGrid');
+  if(!grid) return;
+  grid.innerHTML = ALL_DECORS.map(function(d){
+    var owned = state.decors.includes(d.id);
+    var equippedOn = state.selectedDecorPet && state.petDecors[state.selectedDecorPet] && state.petDecors[state.selectedDecorPet].includes(d.id);
+    return '<div class="decor-item ' + (owned?'':'locked') + ' ' + (equippedOn?'equipped':'') + '" onclick="toggleDecor(\'' + d.id + '\')" title="' + d.name + '">' +
+      d.icon +
+      (owned ? '' : '<div class="lock-tag">🔒</div>') +
+    '</div>';
+  }).join('');
+}
+
+// 选择给哪只宠物装备
+function selectDecorPet(petId){
+  state.selectedDecorPet = petId;
+  saveState();
+  renderDecors();
+}
+
+// 装备/卸下装饰品到选中的宠物
+function toggleDecor(id){
+  if(!state.decors.includes(id)) return;
+  var petId = state.selectedDecorPet || 'rabbit';
+  if(!state.petDecors[petId]) state.petDecors[petId] = [];
+  var arr = state.petDecors[petId];
+  var idx = arr.indexOf(id);
+  if(idx >= 0){
+    // 卸下
+    arr.splice(idx, 1);
+  } else {
+    // 装备：同类只能装备一个
+    var decor = ALL_DECORS.find(function(d){return d.id === id;});
+    if(decor && decor.cat){
+      arr = arr.filter(function(did){
+        var dd = ALL_DECORS.find(function(x){return x.id === did;});
+        return !dd || dd.cat !== decor.cat;
+      });
+    }
+    arr.push(id);
+    state.petDecors[petId] = arr;
+  }
+  saveState();
+  renderDecors();
+  renderPetCards();
+  // 宠物变开心
+  setPetMood(petId, 'happy');
+  renderPetCards();
+  setTimeout(function(){ renderPetCards(); }, 5100);
+}
+
+// 获取宠物装备的装饰品列表
+function getPetDecors(petId){
+  if(!state.petDecors[petId]) state.petDecors[petId] = [];
+  return state.petDecors[petId].map(function(id){
+    return ALL_DECORS.find(function(d){return d.id === id;});
+  }).filter(function(d){return d;});
+}
+
+// ===================== 任务系统 =====================
+function getTodayTasks(){
+  const day = new Date().getDay();
+  if(day === 0 || day === 6) return WEEKEND_TASKS;
+  return WEEKDAY_TASKS;
+}
+
+function getTodayRecord(){
+  const key = todayKey();
+  if(!state.taskRecords[key]) state.taskRecords[key] = {};
+  return state.taskRecords[key];
+}
+
+function isTaskDone(taskId){
+  const rec = getTodayRecord();
+  return !!rec[taskId];
+}
+
+// 打开斑马AI App（intent URL唤起App，失败则跳应用市场/应用宝）
+function openZebraApp(e, intentUrl, fallbackUrl, altPackages){
+  e.preventDefault && e.preventDefault();
+  if(!fallbackUrl){
+    window.location.href = intentUrl;
+    return;
+  }
+  
+  // 构建要尝试的包名列表
+  var packages = [];
+  if(altPackages){
+    packages = altPackages.split(',').map(function(p){return p.trim();}).filter(function(p){return p;});
+  }
+  // 从当前intentUrl里提取包名
+  var mainPkg = intentUrl.match(/package=([^;]+)/);
+  if(mainPkg && mainPkg[1] && packages.indexOf(mainPkg[1]) === -1){
+    packages.unshift(mainPkg[1]);
+  }
+  if(packages.length === 0) packages = ['com.fenbi.android.zenglish.hd'];
+  
+  var left = false;
+  function onHide(){ left = true; }
+  document.addEventListener('pagehide', onHide, {once: true});
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) left = true; }, {once: true});
+  
+  // 依次尝试每个包名
+  var tryIdx = 0;
+  function tryNext(){
+    if(left || tryIdx >= packages.length) return;
+    var pkg = packages[tryIdx];
+    var url = 'intent://#Intent;scheme=banma;package=' + pkg + ';end';
+    window.location.href = url;
+    tryIdx++;
+    // 0.8秒后如果没离开，试下一个包名
+    setTimeout(tryNext, 800);
+  }
+  tryNext();
+  
+  // 1.5秒后如果页面还在，跳转应用市场
+  setTimeout(function(){
+    if(!left){
+      // 先尝试market协议（华为/安卓应用市场），如果失败再跳转网页应用宝
+      window.location.href = fallbackUrl;
+      // 如果是market://协议，1.5秒后还在当前页，说明没有应用市场，再跳应用宝网页
+      if(fallbackUrl.indexOf('market://') === 0){
+        setTimeout(function(){
+          if(!left && document.hasFocus && document.hasFocus()){
+            var pkg = packages[0];
+            window.location.href = 'https://a.app.qq.com/o/simple.jsp?pkgname=' + pkg;
+          }
+        }, 2000);
+      }
+    }
+  }, 1500);
+}
+
+function renderTasks(){
+  const tasks = getTodayTasks();
+  const area = document.getElementById('taskListArea');
+  const day = new Date().getDay();
+  
+  // 每天重置全部打卡视频奖励
+  var lastVideoDate = localStorage.getItem('tuanzi_video_date') || '';
+  var todayStr = todayKey();
+  if(lastVideoDate !== todayStr){
+    state.allDoneVideoShown = false;
+    localStorage.setItem('tuanzi_video_date', todayStr);
+  }
+  
+  const dayName = ['日','一','二','三','四','五','六'][day];
+  let html = `<div class="section-title">📚 今天的学习任务（星期${dayName}）</div>`;
+  
+  tasks.forEach((task, idx) => {
+    const done = isTaskDone(task.id);
+    let extra = '';
+    
+    // 斑马思维 - 提示去桌面打开App
+    if(task.type === 'link'){
+      extra = `<div style="width:100%;margin-top:8px;padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#E8F0FF,#D4E4FF);display:flex;align-items:center;gap:8px"><span style="font-size:24px">🦓</span><span style="font-size:13px;color:#4D96FF;font-weight:600">请到桌面打开<span style="font-size:15px;font-weight:800">「斑马AI学HD」</span>完成今天课程</span></div>`;
+    }
+    // 英文拼读 - 内嵌内容
+    else if(task.type === 'english'){
+      // 从 localStorage 读取家长设置的字母，默认 A
+      var savedLetter = localStorage.getItem('tuanzi_letter') || 'A';
+      var letter = savedLetter;
+      const ed = ENGLISH_DATA[letter] || ENGLISH_DATA['A'];
+      extra = `<div class="eng-section" style="width:100%;margin-top:8px">
+        <div class="eng-letter">${ed.letter}</div>
+        <div style="text-align:center;margin-bottom:8px">
+          ${ed.words.map(w => `<span class="eng-word" style="cursor:pointer" onclick="playSingleWord('${w}')">${w} 🔊</span>`).join(' ')}
+        </div>
+        <div class="eng-sentence" style="cursor:pointer" onclick="speakWord('${ed.sentence}')">${ed.sentence} 🔊</div>
+        <div style="text-align:center;margin-bottom:8px">
+          <button class="speak-btn" onclick="speakWord('${ed.sentence}')">🔊 跟读句子</button>
+          <button class="speak-btn" onclick="speakWords('${ed.words.join(', ')}')">🔊 读单词</button>
+        </div>
+        <div class="eng-cartoon-box" onclick="speakWord('${ed.sentence}')">
+          <div class="cartoon-scene">
+            <div class="cartoon-bubble">${ed.cartoon}</div>
+            <div class="cartoon-char">${letter === 'A' ? '🐜' : letter === 'B' ? '🐻' : letter === 'C' ? '🐱' : letter === 'D' ? '🐶' : letter === 'E' ? '🐘' : letter === 'F' ? '🐸' : letter === 'G' ? '🐐' : letter === 'H' ? '🐴' : letter === 'I' ? '🐧' : letter === 'J' ? '🤹' : letter === 'K' ? '🪁' : letter === 'L' ? '🦁' : letter === 'M' ? '🐵' : letter === 'N' ? '🦫' : letter === 'O' ? '🦉' : letter === 'P' ? '🐷' : letter === 'Q' ? '👑' : letter === 'R' ? '🐰' : letter === 'S' ? '🐍' : letter === 'T' ? '🐯' : letter === 'U' ? '🦄' : letter === 'V' ? '🎻' : letter === 'W' ? '🐳' : letter === 'X' ? '🦊' : letter === 'Y' ? '🪀' : '🦓'}</div>
+            <div class="cartoon-ground"></div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:#888;margin-top:4px">👆 点击动画播放语音</div>
+        </div>
+        <div style="text-align:right;margin-bottom:8px">
+          <button class="speak-btn" style="font-size:12px;padding:4px 10px" onclick="switchToParent()">⚙️ 家长设置字母 →</button>
+        </div>
+        <div class="eng-quiz">
+          <div class="eng-quiz-q">选择哪个单词以字母 ${ed.letter[0]} 开头？</div>
+          <div class="eng-quiz-options" id="engQuiz">
+            ${shuffleArray([...ed.words, 'Tree','Moon','Sun']).slice(0,4).map((w,i) => 
+              `<div class="eng-quiz-opt" onclick="checkEngQuiz(this,'${w}','${ed.letter[0]}')">${w}</div>`
+            ).join('')}
+          </div>
+        </div>
+      </div>`;
+    }
+    // 识字 - 田字格展示笔顺 + 手写练习
+    else if(task.type === 'chinese'){
+      // 优先读家长选的今日汉字，没选则用默认字库
+      var todayChars = [];
+      try { todayChars = JSON.parse(localStorage.getItem('tuanzi_today_chars') || '[]'); }catch(e){}
+      
+      var picked;
+      if(todayChars.length > 0){
+        picked = todayChars.map(function(c){return {char:c,pinyin:getPinyin(c)};});
+      } else {
+        // 没选则用默认字库按日期选2个
+        var customChars = [];
+        try { customChars = JSON.parse(localStorage.getItem('tuanzi_chars') || '[]'); }catch(e){}
+        var allChars = customChars.length > 0 ? customChars.map(function(c){return {char:c,pinyin:getPinyin(c)};}) : CHINESE_DATA.chars;
+        var dayIdx = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+        picked = [allChars[dayIdx % allChars.length], allChars[(dayIdx + 1) % allChars.length]];
+      }
+      
+      var pickedHint = todayChars.length > 0 ? '（家长已选）' : '（默认字库，家长可在设置页选择）';
+      
+      extra = '<div class="chn-game" style="width:100%;margin-top:8px">' +
+        '<div style="font-size:12px;color:#888;margin-bottom:8px">📖 今日学习2个汉字' + pickedHint + '</div>' +
+        '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
+          picked.map(function(c, idx){
+            return '<div style="flex:1;min-width:120px;max-width:180px;background:linear-gradient(135deg,#FFF9E6,#FFE8F0);border-radius:14px;padding:16px;text-align:center">' +
+              '<div style="font-size:14px;color:#999;margin-bottom:6px">' + (c.pinyin || '') + '</div>' +
+              '<div style="font-size:56px;font-weight:800;cursor:pointer;display:inline-block;padding:8px 24px;border-radius:12px;background:#fff;transition:all .2s;border:3px solid transparent" onclick="speakChinese(\'' + c.char + '\',this)">' + c.char + '</div>' +
+              '<div style="font-size:11px;color:var(--pink);margin-top:6px">👆 点字听发音</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+    }
+    // 数学题 - 每天3道
+    else if(task.type === 'math'){
+      if(!state.currentMathQs || state.currentMathQs.length === 0) generateMathQs();
+      var curIdx = state.mathQIdx || 0;
+      if(curIdx >= state.currentMathQs.length) curIdx = state.currentMathQs.length - 1;
+      var q = state.currentMathQs[curIdx];
+      var done3 = (state.mathDone || 0);
+      var mathRange = getMathRange();
+      if(done3 >= 3){
+        extra = '<div class="math-card" style="width:100%;margin-top:8px"><div class="math-q" style="color:#6BCB77">🎉 ' + mathRange + '以内3道题全答对了！</div></div>';
+      } else {
+        extra = '<div class="math-card" style="width:100%;margin-top:8px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+            '<span style="font-size:12px;color:#888">第 ' + (curIdx+1) + ' / 3 题 · ' + mathRange + '以内</span>' +
+            '<span style="font-size:12px;color:#6BCB77">已答对 ' + done3 + ' 题</span>' +
+          '</div>' +
+          '<div class="math-q">' + q.a + ' ' + q.op + ' ' + q.b + ' = ?</div>' +
+          '<div class="math-input">' +
+            '<input type="number" id="mathAns" placeholder="答案" onkeypress="if(event.key===\'Enter\')checkMath()">' +
+            '<button onclick="checkMath()">提交</button>' +
+          '</div>' +
+          '<div class="math-feedback" id="mathFeedback"></div>' +
+        '</div>';
+      }
+    }
+    // 通识视频 - 家长选的2个视频
+    else if(task.type === 'video'){
+      // 读取家长选的视频
+      var todayVids = [];
+      try { todayVids = JSON.parse(localStorage.getItem('tuanzi_today_videos') || '[]'); }catch(e){}
+      
+      var vids;
+      if(todayVids.length > 0){
+        vids = todayVids.map(function(idx){ return SCIENCE_VIDEOS[idx]; }).filter(function(v){return v;});
+      } else {
+        // 没选则默认今日推荐 + 1个随机
+        var todayIdx = getTodayVideoIndex();
+        var today = SCIENCE_VIDEOS[todayIdx];
+        var others = shuffleArray(SCIENCE_VIDEOS.filter(function(v,i){return i!==todayIdx;})).slice(0,1);
+        vids = [today].concat(others);
+      }
+      
+      var pickedHint = todayVids.length > 0 ? '（家长已选）' : '（默认推荐，家长可在设置页选择）';
+      
+      // 默认显示第一个视频的信息
+      var v0 = vids[0];
+      var videoUrl0 = 'https://www.bilibili.com/video/' + v0.bvid + '?p=' + v0.page;
+
+      extra = '<div style="width:100%;margin-top:8px">' +
+        '<div style="font-size:14px;font-weight:700;margin-bottom:8px">📺 今日通识 ' + vids.length + '个视频' + pickedHint + '</div>' +
+        '<div id="videoPlayerArea">' +
+          '<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;padding:20px;text-align:center;margin-bottom:8px">' +
+            '<div style="font-size:48px;margin-bottom:8px">' + v0.icon + '</div>' +
+            '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">' + v0.title + '</div>' +
+            '<div style="font-size:12px;color:#aaa;margin-bottom:12px">' + v0.detail + '</div>' +
+            '<a href="' + videoUrl0 + '" target="_blank" style="display:inline-block;padding:12px 32px;border-radius:25px;background:linear-gradient(135deg,#FF6B9D,#FFC75F);color:#fff;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(255,107,157,0.4)">▶ 点击全屏播放</a>' +
+            '<div style="font-size:11px;color:#888;margin-top:8px">点击后在B站全屏观看，清晰度更高</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:#888;margin:8px 0">👇 点击其他视频</div>';
+      vids.forEach(function(v, i){
+        var videoUrl = 'https://www.bilibili.com/video/' + v.bvid + '?p=' + v.page;
+        extra += '<a href="' + videoUrl + '" target="_blank" class="video-item" style="text-decoration:none;display:flex">' +
+          '<div class="video-thumb" style="background:#FFF3E0">' + v.icon + '</div>' +
+          '<div class="video-info">' +
+            '<div class="video-title">' + v.title + '</div>' +
+            '<div class="video-detail">' + v.detail + '</div>' +
+          '</div>' +
+          '<div class="task-link-btn">▶ 播放</div>' +
+        '</a>';
+      });
+      extra += '</div>';
+    }
+    
+    html += `<div class="task-item ${done?'done':''}">
+      <div class="task-icon" style="background:${task.color}22;color:${task.color}">${task.icon}</div>
+      <div class="task-info">
+        <div class="task-name">${task.name} <span class="task-badge ${task.badge}">${task.badgeText}</span></div>
+        <div class="task-detail">${task.detail}</div>
+        ${extra}
+      </div>
+      <div class="task-check" onclick="event.stopPropagation();toggleTask('${task.id}', this, event)"></div>
+    </div>`;
+  });
+  
+  area.innerHTML = html;
+  
+  renderMakeupBanner();
+  renderCalendar();
+}
+
+function toggleTask(taskId, el, event){
+  // 如果点击的是链接/按钮/输入，不触发
+  if(event && event.target){
+    const t = event.target;
+    if(t.tagName === 'A' || t.tagName === 'BUTTON' || t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.classList.contains('eng-quiz-opt') || t.classList.contains('chn-match-opt') || t.classList.contains('video-item') || t.classList.contains('memo-del') || t.closest('.eng-quiz-opt') || t.closest('.chn-match-opt') || t.closest('.video-item')) return;
+  }
+  
+  const rec = getTodayRecord();
+  rec[taskId] = !rec[taskId];
+  saveState();
+  
+  if(rec[taskId]){
+    // 完成任务奖励
+    giveFoodReward(taskId);
+    // 三只宠物都变开心
+    for(var i=0; i<PETS.length; i++){
+      setPetMood(PETS[i].id, 'happy');
+    }
+    setTimeout(function(){ renderPet(); }, 5100);
+  }
+  
+  renderTasks();
+  renderPet();
+  renderFood();
+  renderReward();
+}
+
+function giveFoodReward(taskId){
+  // 每项任务完成就获得食物，随机分配给一只宠物
+  const rewards = {
+    zebra: 'apple',
+    english: 'apple',
+    chinese: 'carrot',
+    writing: 'apple',
+    math: 'carrot',
+    science: 'cake',
+  };
+  const food = rewards[taskId] || 'apple';
+  
+  // 随机分配给一只宠物
+  var petIds = PETS.map(function(p){return p.id;});
+  var luckyPet = petIds[Math.floor(Math.random()*petIds.length)];
+  if(!state.foods[luckyPet]) state.foods[luckyPet] = {apple:0, carrot:0, cake:0};
+  state.foods[luckyPet][food] = (state.foods[luckyPet][food] || 0) + 1;
+  state.stars += 10;
+  
+  var petName = PETS.find(function(p){return p.id === luckyPet;}).name;
+  var foodName = FOODS[food].name;
+  var foodIcon = FOODS[food].icon;
+  
+  // 完成英文任务时推进字母索引
+  if(taskId === 'english'){
+    state.currentLetterIdx = (state.currentLetterIdx + 1) % 26;
+    const newLetter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[state.currentLetterIdx];
+    setTimeout(() => {
+      showCelebrate('🔤', '新字母解锁！', `太棒了！下一个字母：${newLetter}`);
+    }, 1500);
+  }
+  
+  // 提示获得食物
+  setTimeout(function(){
+    showCelebrate(foodIcon, '获得食物！', petName + ' 得到了一个' + foodName + '！');
+  }, 300);
+  
+  // 检查今天所有任务是否全完成 → 随机装饰品 + 随机视频奖励
+  const todayTasks = getTodayTasks();
+  const rec = getTodayRecord();
+  const allDone = todayTasks.every(function(t){ return rec[t.id]; });
+  if(allDone && !state.allDoneVideoShown){
+    state.allDoneVideoShown = true;
+
+    // 获得随机装饰品（优先未拥有的）
+    var ownedDecors = state.decors.slice();
+    var lockedDecors = ALL_DECORS.filter(function(d){ return !ownedDecors.includes(d.id); });
+    var newDecor = null;
+    if(lockedDecors.length > 0){
+      // 有未拥有的，随机选一个
+      newDecor = lockedDecors[Math.floor(Math.random() * lockedDecors.length)];
+      state.decors.push(newDecor.id);
+    } else {
+      // 全部已拥有，随机选一个作为奖励提示
+      newDecor = ALL_DECORS[Math.floor(Math.random() * ALL_DECORS.length)];
+    }
+    var decorIcon = newDecor.icon;
+    var decorName = newDecor.name;
+
+    setTimeout(function(){
+      showCelebrate('🎁', '全部打卡完成！', '获得装饰【' + decorName + ' ' + decorIcon + '】');
+    }, 2000);
+  }
+  
+  saveState();
+  renderDecors();
+  renderReward();
+}
+
+// 补打卡
+function renderMakeupBanner(){
+  const banner = document.getElementById('makeupBanner');
+  // 检查最近5天有没有未完成的
+  const now = new Date();
+  let hasMissed = false;
+  let missedDates = [];
+  for(let i=1; i<=5; i++){
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    if(d.getDay() === 0) continue; // 跳过周日逻辑简化
+    const key = getDateKey(d);
+    const rec = state.taskRecords[key];
+    if(!rec){
+      // 没有记录，可能是需要补的
+      const tasks = (d.getDay()===0||d.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+      missedDates.push({date:key, d, tasks});
+      hasMissed = true;
+    }
+  }
+  if(hasMissed){
+    banner.innerHTML = `<div class="makeup-banner">
+      ⚠️ 最近5天有未完成的任务，可以补打卡哦！
+      <button onclick="makeupTask()">去补卡</button>
+    </div>`;
+  } else {
+    banner.innerHTML = '';
+  }
+}
+
+function makeupTask(){
+  const now = new Date();
+  for(let i=1; i<=5; i++){
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const key = getDateKey(d);
+    if(!state.taskRecords[key]){
+      state.taskRecords[key] = {};
+      const tasks = (d.getDay()===0||d.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+      tasks.forEach(t => {
+        state.taskRecords[key][t.id] = true;
+      });
+      state.stars += 5;
+      saveState();
+      showCelebrate('✅', '补卡成功！', `${d.getMonth()+1}月${d.getDate()}日的任务已补打卡！+5星`);
+      renderTasks();
+      renderReward();
+      return;
+    }
+  }
+  showCelebrate('😐', '没有需要补卡的任务', '最近5天都已打卡啦！');
+}
+
+// ===================== 英文游戏 =====================
+// 家长选择字母
+// 播放通识视频
+function playVideo(bvid, page, title){
+  var playerHtml = '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000">'+
+    '<iframe id="tuanziVideoFrame" src="https://player.bilibili.com/player.html?bvid=' + bvid + '&page=' + page + '&high_quality=1&q=80&danmaku=0&autoplay=1" ' +
+    'style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" ' +
+    'scrolling="no" border="0" frameborder="no" framespacing="0" ' +
+    'allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" ' +
+    'allow="autoplay; fullscreen; picture-in-picture"></iframe></div>';
+
+  document.getElementById('videoPlayerArea').innerHTML =
+    '<div style="font-size:14px;font-weight:700;margin-bottom:8px">▶ ' + title + '</div>' + playerHtml;
+
+  document.getElementById('videoPlayerArea').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function selectLetter(letter){
+  localStorage.setItem('tuanzi_letter', letter);
+  renderTasks();
+  renderParent();
+}
+
+// 跳转到家长设置页
+function switchToParent(){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-page="parent"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-parent').classList.add('active');
+  renderParent();
+}
+
+// 渲染家长设置页
+function renderParent(){
+  var savedLetter = localStorage.getItem('tuanzi_letter') || 'A';
+  var letterList = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  var grid = document.getElementById('parentLetterGrid');
+  if(!grid) return;
+  grid.innerHTML = letterList.map(function(l){
+    return '<button class="parent-letter-btn ' + (l===savedLetter?'selected':'') + '" onclick="selectLetter(\'' + l + '\')">' + l + '</button>';
+  }).join('');
+  var display = document.getElementById('curLetterDisplay');
+  if(display) display.textContent = savedLetter;
+  
+  // 数学难度按钮
+  var curLevel = localStorage.getItem('tuanzi_math_level') || '10';
+  var levelNames = {'10':'10以内','20':'20以内','30':'30以内','40':'40以内','50':'50以内'};
+  var mathGrid = document.getElementById('mathLevelGrid');
+  if(mathGrid){
+    mathGrid.innerHTML = ['10','20','30','40','50'].map(function(lv){
+      return '<button class="parent-letter-btn ' + (lv===curLevel?'selected':'') + '" onclick="selectMathLevel(\'' + lv + '\')" style="min-width:60px;padding:8px 14px">' + levelNames[lv] + '</button>';
+    }).join('');
+  }
+  var mathDisp = document.getElementById('curMathLevel');
+  if(mathDisp) mathDisp.textContent = levelNames[curLevel] || '10以内';
+  
+  renderCustomChars();
+  renderTodayCharPicker();
+  renderTodayVideoPicker();
+}
+
+function selectMathLevel(level){
+  localStorage.setItem('tuanzi_math_level', level);
+  // 切换难度后重新出题
+  state.currentMathQs = null;
+  state.mathQIdx = 0;
+  state.mathDone = 0;
+  saveState();
+  renderParent();
+  renderTasks();
+}
+
+// ===================== 通识视频选择 =====================
+function renderTodayVideoPicker(){
+  var picker = document.getElementById('todayVideoPicker');
+  var counter = document.getElementById('todayVideoCount');
+  var selected = document.getElementById('todayVideoSelected');
+  if(!picker) return;
+  
+  var today = [];
+  try { today = JSON.parse(localStorage.getItem('tuanzi_today_videos') || '[]'); }catch(e){}
+  
+  if(counter) counter.textContent = today.length;
+  
+  picker.innerHTML = SCIENCE_VIDEOS.map(function(v, idx){
+    var isSel = today.indexOf(idx) !== -1;
+    return '<div onclick="toggleTodayVideo(' + idx + ')" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:all .15s;' +
+      (isSel ? 'background:linear-gradient(135deg,#FF6B9D,#FFC75F);border:2px solid #FF6B9D;' : 'background:#f5f5f5;border:2px solid transparent;') + '">' +
+      '<span style="font-size:20px">' + v.icon + '</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:13px;font-weight:700;color:' + (isSel ? '#fff' : '#333') + '">' + v.title + '</div>' +
+        '<div style="font-size:11px;color:' + (isSel ? '#fff' : '#999') + '">' + v.detail + '</div>' +
+      '</div>' +
+      (isSel ? '<span style="font-size:16px;color:#fff">✓</span>' : '') +
+      '</div>';
+  }).join('');
+  
+  // 显示已选
+  if(today.length === 0){
+    selected.innerHTML = '<div style="font-size:13px;color:#aaa;text-align:center">👆 未选择，将使用默认推荐视频</div>';
+  } else {
+    selected.innerHTML = '<div style="font-size:13px;color:#888;margin-bottom:8px">📋 今日通识视频：</div>' +
+      '<div style="display:flex;flex-direction:column;gap:4px">' +
+      today.map(function(idx){
+        var v = SCIENCE_VIDEOS[idx];
+        return '<div style="display:flex;align-items:center;gap:6px">' +
+          '<span style="font-size:16px">' + v.icon + '</span>' +
+          '<span style="font-size:13px;font-weight:700;color:var(--pink)">' + v.title + '</span>' +
+          '<span style="font-size:11px;color:#999">' + v.detail + '</span>' +
+          '</div>';
+      }).join('') +
+      '</div>';
+  }
+}
+
+function toggleTodayVideo(idx){
+  var today = [];
+  try { today = JSON.parse(localStorage.getItem('tuanzi_today_videos') || '[]'); }catch(e){}
+  
+  var pos = today.indexOf(idx);
+  if(pos !== -1){
+    // 取消选择
+    today.splice(pos, 1);
+  } else {
+    // 最多选2个
+    if(today.length >= 2) return;
+    today.push(idx);
+  }
+  
+  localStorage.setItem('tuanzi_today_videos', JSON.stringify(today));
+  renderTodayVideoPicker();
+  renderTasks();
+}
+function addCustomChar(){
+  var input = document.getElementById('newCharInput');
+  if(!input) return;
+  var char = input.value.trim();
+  if(!char) return;
+  
+  var chars = [];
+  try { chars = JSON.parse(localStorage.getItem('tuanzi_chars') || '[]'); }catch(e){}
+  
+  // 去重
+  if(chars.indexOf(char) !== -1){
+    showCelebrate('😅', '已添加过', '这个字已经在列表里了');
+    input.value = '';
+    return;
+  }
+  
+  // 最多50个
+  if(chars.length >= 50){
+    showCelebrate('😅', '字库已满', '最多添加50个汉字');
+    return;
+  }
+  
+  // 纯前端添加：拼音用内置映射，发音用有道词典/百度TTS/Web Speech
+  // 如果拼音映射里没有这个字，尝试从在线拼音API获取
+  if(!PINYIN_MAP[char]){
+    // 简易拼音获取：用有道词典API
+    fetch('https://dict.youdao.com/dict/translate?q=' + encodeURIComponent(char) + '&le=han')
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data && data.translation){
+          var py = data.translation;
+          PINYIN_MAP[char] = py;
+        }
+        finishAddChar(char, chars, input);
+      })
+      .catch(function(){
+        finishAddChar(char, chars, input);
+      });
+  } else {
+    finishAddChar(char, chars, input);
+  }
+}
+
+// 完成添加汉字（纯前端版）
+function finishAddChar(char, chars, input){
+  chars.push(char);
+  localStorage.setItem('tuanzi_chars', JSON.stringify(chars));
+  input.value = '';
+  renderCustomChars();
+  renderTodayCharPicker();
+  renderTasks();
+  showCelebrate('✅', '添加成功', '已添加汉字「' + char + '」，点击可听发音');
+}
+
+// 删除自定义汉字
+function removeCustomChar(char){
+  var chars = [];
+  try { chars = JSON.parse(localStorage.getItem('tuanzi_chars') || '[]'); }catch(e){}
+  chars = chars.filter(function(c){ return c !== char; });
+  localStorage.setItem('tuanzi_chars', JSON.stringify(chars));
+  renderCustomChars();
+}
+
+// 渲染自定义汉字列表（字库，不删除）
+function renderCustomChars(){
+  var container = document.getElementById('customCharList');
+  if(!container) return;
+  var chars = [];
+  try { chars = JSON.parse(localStorage.getItem('tuanzi_chars') || '[]'); }catch(e){}
+  
+  if(chars.length === 0){
+    container.innerHTML = '<div style="font-size:13px;color:#aaa;padding:8px">暂未添加汉字，使用默认字库</div>';
+    return;
+  }
+  
+  container.innerHTML = chars.map(function(c){
+    var picto = getCharPictogram(c);
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;background:linear-gradient(135deg,#FFF9E6,#FFE8F0);border-radius:10px;padding:8px 12px;min-width:56px">' +
+      '<span style="font-size:24px">' + picto.emoji + '</span>' +
+      '<span style="font-size:22px;font-weight:700;color:#333;cursor:pointer" onclick="speakChinese(\'' + c + '\',this)">' + c + '</span>' +
+      '<span style="font-size:11px;color:#999">' + (getPinyin(c) || '') + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+// 选择/取消今天学习的字
+function toggleTodayChar(char){
+  var today = [];
+  try { today = JSON.parse(localStorage.getItem('tuanzi_today_chars') || '[]'); }catch(e){}
+  
+  var idx = today.indexOf(char);
+  if(idx !== -1){
+    // 已选，取消
+    today.splice(idx, 1);
+  } else {
+    // 最多2个
+    if(today.length >= 2){
+      showCelebrate('😅', '已选满2个', '今天最多学习2个字，先取消一个再选');
+      return;
+    }
+    today.push(char);
+  }
+  
+  localStorage.setItem('tuanzi_today_chars', JSON.stringify(today));
+  renderTodayCharPicker();
+}
+
+// 渲染今日选字区域
+function renderTodayCharPicker(){
+  var picker = document.getElementById('todayCharPicker');
+  var selected = document.getElementById('todayCharSelected');
+  var counter = document.getElementById('todayCharCount');
+  if(!picker) return;
+  
+  // 直接使用小羊上山1-4级完整字库
+  var chars = XIAOYANG_ALL.split('');
+  
+  var today = [];
+  try { today = JSON.parse(localStorage.getItem('tuanzi_today_chars') || '[]'); }catch(e){}
+  
+  if(counter) counter.textContent = today.length;
+  
+  picker.innerHTML = chars.map(function(c){
+    var isSel = today.indexOf(c) !== -1;
+    var py = getPinyin(c) || '';
+    return '<div onclick="toggleTodayChar(\'' + c + '\')" style="display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:8px;padding:6px 8px;min-width:48px;cursor:pointer;transition:all .15s;' + 
+      (isSel ? 'background:linear-gradient(135deg,#FF6B9D,#FFC75F);border:2px solid #FF6B9D;' : 'background:#f5f5f5;border:2px solid transparent;') + 
+      '">' +
+      '<span style="font-size:22px;font-weight:700;color:' + (isSel ? '#fff' : '#333') + '">' + c + '</span>' +
+      '<span style="font-size:10px;color:' + (isSel ? '#fff' : '#999') + '">' + py + '</span>' +
+      (isSel ? '<span style="font-size:9px;color:#fff">✓</span>' : '') +
+      '</div>';
+  }).join('');
+  
+  // 显示已选的字
+  if(today.length === 0){
+    selected.innerHTML = '<div style="font-size:13px;color:#aaa;text-align:center">👆 未选择，将使用默认字库</div>';
+  } else {
+    selected.innerHTML = '<div style="font-size:13px;color:#888;margin-bottom:8px">📋 今日学习：</div>' +
+      '<div style="display:flex;gap:12px;justify-content:center">' +
+      today.map(function(c){
+        return '<div style="text-align:center">' +
+          '<div style="font-size:32px;font-weight:800;color:var(--pink)">' + c + '</div>' +
+          '<div style="font-size:12px;color:#999">' + (getPinyin(c) || '') + '</div>' +
+          '</div>';
+      }).join('') +
+      '</div>';
+  }
+}
+
+function checkEngQuiz(el, word, letter){
+  const isCorrect = word[0].toUpperCase() === letter.toUpperCase();
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+  if(!isCorrect){
+    setTimeout(() => el.classList.remove('wrong'), 1000);
+  }
+}
+
+// ===================== 语音播放 =====================
+// 用页面固定 audio 标签播放（测试5验证可用）
+
+// 逐词播放队列
+var wordQueue = [];
+var queueIdx = 0;
+
+// 整句朗读
+function speakSentence(text){
+  var words = text.split(/[\s,\.\!?;:]+/).filter(function(w){return w.length > 0;});
+  words = words.map(function(w){return w.replace(/[^a-zA-Z']/g, '');}).filter(function(w){return w.length > 0;});
+  if(words.length === 0) return;
+  wordQueue = words;
+  queueIdx = 0;
+  playNextFromQueue();
+}
+
+// 单词播放
+function playSingleWord(word){
+  var w = word.replace(/[^a-zA-Z']/g, '').toLowerCase();
+  if(!w) return;
+  wordQueue = [w];
+  queueIdx = 0;
+  playNextFromQueue();
+}
+
+// 读单词列表
+function speakWords(text){
+  var words = text.split(/[,\s]+/).filter(function(w){return w.length > 0;});
+  words = words.map(function(w){return w.replace(/[^a-zA-Z']/g, '');}).filter(function(w){return w.length > 0;});
+  if(words.length === 0) return;
+  wordQueue = words;
+  queueIdx = 0;
+  playNextFromQueue();
+}
+
+function playNextFromQueue(){
+  if(queueIdx >= wordQueue.length) return;
+  var word = wordQueue[queueIdx].toLowerCase();
+  queueIdx++;
+  
+  var tag = document.getElementById('tuanziAudio');
+  if(!tag){
+    tag = document.createElement('audio');
+    tag.id = 'tuanziAudio';
+    tag.preload = 'auto';
+    document.body.appendChild(tag);
+  }
+  
+  // 超时保护：2.5秒内没播完就跳下一个
+  var timer = setTimeout(function(){
+    tag.pause();
+    setTimeout(playNextFromQueue, 50);
+  }, 2500);
+  
+  tag.onended = function(){
+    clearTimeout(timer);
+    setTimeout(playNextFromQueue, 80);
+  };
+  tag.onerror = function(){
+    clearTimeout(timer);
+    setTimeout(playNextFromQueue, 50);
+  };
+  
+  tag.src = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(word) + '&type=2';
+  tag.load();
+  tag.play().catch(function(){
+    // type=2 失败，尝试 type=1
+    tag.src = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(word) + '&type=1';
+    tag.load();
+    tag.play().catch(function(){
+      clearTimeout(timer);
+      setTimeout(playNextFromQueue, 100);
+    });
+  });
+}
+
+// 兼容旧调用
+function speakWord(text){
+  speakSentence(text);
+}
+
+// 中文发音（本地音频文件标准普通话 → 服务器代理百度TTS → 有道 → Web Speech后备）
+function speakChinese(char, el){
+  // 高亮动画
+  if(el){
+    el.style.transform = 'scale(1.3)';
+    el.style.background = '#FFE0EC';
+    setTimeout(function(){ 
+      el.style.transform = ''; 
+      el.style.background = '#FFF5E4'; 
+    }, 600);
+  }
+  
+  var tag = document.getElementById('tuanziAudio');
+  if(!tag){
+    tag = document.createElement('audio');
+    tag.id = 'tuanziAudio';
+    tag.preload = 'auto';
+    document.body.appendChild(tag);
+  }
+  
+  // 方法1（优先）：本地音频文件 audio/字.mp3（标准普通话百度TTS录音）
+  tag.src = 'audio/' + encodeURIComponent(char) + '.mp3';
+  tag.load();
+  tag.play().then(function(){
+    // 本地音频播放成功
+  }).catch(function(){
+    // 本地文件失败，通过服务器代理百度TTS
+    tag.src = 'api/tts?text=' + encodeURIComponent(char);
+    tag.load();
+    tag.play().then(function(){
+      // 服务器代理成功
+    }).catch(function(){
+      // 服务器也失败，用有道词典拼音发音
+      var py = PINYIN_MAP[char] || char;
+      py = py.replace(/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/g, function(m){
+        var tones = {'ā':'a','á':'a','ǎ':'a','à':'a','ē':'e','é':'e','ě':'e','è':'e','ī':'i','í':'i','ǐ':'i','ì':'i','ō':'o','ó':'o','ǒ':'o','ò':'o','ū':'u','ú':'u','ǔ':'u','ù':'u','ǖ':'v','ǘ':'v','ǚ':'v','ǜ':'v'};
+        return tones[m] || m;
+      });
+      tag.src = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(py) + '&type=2';
+      tag.load();
+      tag.play().catch(function(){
+        // 都失败，用Web Speech API
+        if('speechSynthesis' in window){
+          var u = new SpeechSynthesisUtterance(char);
+          u.lang = 'zh-CN';
+          u.rate = 0.85;
+          speechSynthesis.cancel();
+          speechSynthesis.speak(u);
+        }
+      });
+    });
+  });
+}
+
+// 音频备用：有道词典 → 百度TTS → Web Speech
+function speakChineseAudioFallback(char, tag){
+  // 有道词典发音
+  var py = PINYIN_MAP[char] || char;
+  py = py.replace(/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/g, function(m){
+    var tones = {'ā':'a','á':'a','ǎ':'a','à':'a','ē':'e','é':'e','ě':'e','è':'e','ī':'i','í':'i','ǐ':'i','ì':'i','ō':'o','ó':'o','ǒ':'o','ò':'o','ū':'u','ú':'u','ǔ':'u','ù':'u','ǖ':'v','ǘ':'v','ǚ':'v','ǜ':'v'};
+    return tones[m] || m;
+  });
+  tag.src = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(py) + '&type=2';
+  tag.load();
+  tag.play().then(function(){
+    // 成功
+  }).catch(function(){
+    // 百度TTS
+    var baiduUrl = 'https://fanyi.baidu.com/gettts?lan=zh&text=' + encodeURIComponent(char) + '&spd=4&source=web';
+    tag.src = baiduUrl;
+    tag.load();
+    tag.play().catch(function(){
+      // Web Speech API
+      if('speechSynthesis' in window){
+        var u = new SpeechSynthesisUtterance(char);
+        u.lang = 'zh-CN';
+        u.rate = 0.8;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
+    });
+  });
+}
+
+// 获取百度 TTS 并转为 blob URL
+function fetchBaiduTTS(char, callback){
+  var url = 'https://fanyi.baidu.com/gettts?lan=zh&text=' + encodeURIComponent(char) + '&spd=3&source=web';
+  fetch(url).then(function(resp){
+    if(!resp.ok) throw new Error('not ok');
+    return resp.blob();
+  }).then(function(blob){
+    var blobUrl = URL.createObjectURL(blob);
+    callback(blobUrl);
+  }).catch(function(){
+    callback(null);
+  });
+}
+
+function tryOnlineAudio(word, callback){
+  playYoudaoAudio(word, callback);
+}function speakWordFallback(text){
+  speakSentence(text);
+}
+
+// ===================== 识字游戏 =====================
+function checkChnMatch(el){
+  const isCorrect = el.dataset.correct === 'true';
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+  if(!isCorrect){
+    setTimeout(() => el.classList.remove('wrong'), 1000);
+  }
+}
+
+// 拼音辅助表
+var PINYIN_MAP = {
+'一': 'yī',
+  '七': 'qī',
+  '三': 'sān',
+  '上': 'shàng',
+  '下': 'xià',
+  '不': 'bù',
+  '丑': 'chǒu',
+  '两': 'liǎng',
+  '中': 'zhōng',
+  '乐': 'lè',
+  '九': 'jiǔ',
+  '乡': 'xiāng',
+  '乱': 'luàn',
+  '了': 'le',
+  '二': 'èr',
+  '云': 'yún',
+  '五': 'wǔ',
+  '亮': 'liàng',
+  '他': 'tā',
+  '们': 'men',
+  '低': 'dī',
+  '你': 'nǐ',
+  '兄': 'xiōng',
+  '兔': 'tù',
+  '入': 'rù',
+  '八': 'bā',
+  '六': 'liù',
+  '关': 'guān',
+  '兴': 'xīng',
+  '写': 'xiě',
+  '冷': 'lěng',
+  '净': 'jìng',
+  '出': 'chū',
+  '到': 'dào',
+  '前': 'qián',
+  '十': 'shí',
+  '去': 'qù',
+  '又': 'yòu',
+  '友': 'yǒu',
+  '只': 'zhǐ',
+  '右': 'yòu',
+  '叶': 'yè',
+  '吃': 'chī',
+  '同': 'tóng',
+  '后': 'hòu',
+  '听': 'tīng',
+  '哥': 'gē',
+  '哭': 'kū',
+  '四': 'sì',
+  '回': 'huí',
+  '圆': 'yuán',
+  '地': 'dì',
+  '坏': 'huài',
+  '坐': 'zuò',
+  '城': 'chéng',
+  '墙': 'qiáng',
+  '外': 'wài',
+  '多': 'duō',
+  '夜': 'yè',
+  '大': 'dà',
+  '天': 'tiān',
+  '太': 'tài',
+  '头': 'tóu',
+  '女': 'nǚ',
+  '奶': 'nǎi',
+  '她': 'tā',
+  '好': 'hǎo',
+  '妈': 'mā',
+  '妹': 'mèi',
+  '姐': 'jiě',
+  '子': 'zi',
+  '学': 'xué',
+  '家': 'jiā',
+  '小': 'xiǎo',
+  '少': 'shǎo',
+  '屋': 'wū',
+  '山': 'shān',
+  '岛': 'dǎo',
+  '左': 'zuǒ',
+  '师': 'shī',
+  '帽': 'mào',
+  '干': 'gàn',
+  '开': 'kāi',
+  '弟': 'dì',
+  '弯': 'wān',
+  '快': 'kuài',
+  '怕': 'pà',
+  '我': 'wǒ',
+  '户': 'hù',
+  '打': 'dǎ',
+  '找': 'zhǎo',
+  '拉': 'lā',
+  '拍': 'pāi',
+  '拿': 'ná',
+  '放': 'fàng',
+  '新': 'xīn',
+  '方': 'fāng',
+  '日': 'rì',
+  '旧': 'jiù',
+  '早': 'zǎo',
+  '明': 'míng',
+  '星': 'xīng',
+  '是': 'shì',
+  '晚': 'wǎn',
+  '暖': 'nuǎn',
+  '暗': 'àn',
+  '月': 'yuè',
+  '朋': 'péng',
+  '木': 'mù',
+  '村': 'cūn',
+  '来': 'lái',
+  '板': 'bǎn',
+  '林': 'lín',
+  '果': 'guǒ',
+  '树': 'shù',
+  '校': 'xiào',
+  '根': 'gēn',
+  '桥': 'qiáo',
+  '水': 'shuǐ',
+  '沙': 'shā',
+  '没': 'méi',
+  '河': 'hé',
+  '泥': 'ní',
+  '洋': 'yáng',
+  '洞': 'dòng',
+  '海': 'hǎi',
+  '湖': 'hú',
+  '溪': 'xī',
+  '火': 'huǒ',
+  '灯': 'dēng',
+  '热': 'rè',
+  '爱': 'ài',
+  '爷': 'yé',
+  '爸': 'bà',
+  '牛': 'niú',
+  '狗': 'gǒu',
+  '猫': 'māo',
+  '球': 'qiú',
+  '田': 'tián',
+  '男': 'nán',
+  '白': 'bái',
+  '的': 'de',
+  '直': 'zhí',
+  '看': 'kàn',
+  '短': 'duǎn',
+  '石': 'shí',
+  '硬': 'yìng',
+  '窗': 'chuāng',
+  '站': 'zhàn',
+  '笑': 'xiào',
+  '粉': 'fěn',
+  '粗': 'cū',
+  '紫': 'zǐ',
+  '红': 'hóng',
+  '细': 'xì',
+  '给': 'gěi',
+  '绿': 'lǜ',
+  '羊': 'yáng',
+  '美': 'měi',
+  '老': 'lǎo',
+  '脏': 'zàng',
+  '船': 'chuán',
+  '色': 'sè',
+  '花': 'huā',
+  '草': 'cǎo',
+  '蓝': 'lán',
+  '虫': 'chóng',
+  '衣': 'yī',
+  '袜': 'wà',
+  '裤': 'kù',
+  '见': 'jiàn',
+  '说': 'shuō',
+  '读': 'dú',
+  '走': 'zǒu',
+  '跑': 'pǎo',
+  '路': 'lù',
+  '跳': 'tiào',
+  '车': 'chē',
+  '软': 'ruǎn',
+  '轻': 'qīng',
+  '近': 'jìn',
+  '远': 'yuǎn',
+  '里': 'lǐ',
+  '重': 'zhòng',
+  '野': 'yě',
+  '金': 'jīn',
+  '铁': 'tiě',
+  '铜': 'tóng',
+  '银': 'yín',
+  '长': 'zhǎng',
+  '门': 'mén',
+  '闭': 'bì',
+  '阳': 'yáng',
+  '雨': 'yǔ',
+  '青': 'qīng',
+  '鞋': 'xié',
+  '顶': 'dǐng',
+  '风': 'fēng',
+  '飞': 'fēi',
+  '马': 'mǎ',
+  '高': 'gāo',
+  '鱼': 'yú',
+  '鸟': 'niǎo',
+  '黄': 'huáng',
+  '黑': 'hēi',
+};
+function getPinyin(char){
+  if(PINYIN_MAP[char]) return PINYIN_MAP[char];
+  return '';
+}
+
+// ===================== 笔顺数据 + 田字格手写 =====================
+// 每个字的笔画顺序（用笔画名称数组表示）
+var STROKE_DATA = {
+  '一':['横'],
+  '二':['横','横'],
+  '三':['横','横','横'],
+  '四':['竖','横折','撇','竖弯','横'],
+  '五':['横','竖','横折','横'],
+  '六':['点','横','撇','点'],
+  '七':['横','竖弯钩'],
+  '八':['撇','捺'],
+  '九':['撇','横折弯钩'],
+  '十':['横','竖'],
+  '大':['横','撇','捺'],
+  '小':['竖钩','撇','点'],
+  '上':['竖','横','横'],
+  '下':['横','竖','点'],
+  '人':['撇','捺'],
+  '口':['竖','横折','横'],
+  '手':['撇','横','横','竖钩'],
+  '目':['竖','横折','横','横','横'],
+  '日':['竖','横折','横','横'],
+  '月':['撇','横折钩','横','横'],
+  '木':['横','竖','撇','捺'],
+  '林':['横','竖','撇','点','横','竖','撇','点'],
+  '水':['竖钩','横撇','撇','捺'],
+  '火':['点','撇','撇','捺'],
+  '山':['竖','竖折','竖'],
+  '石':['横','撇','竖','横折','横'],
+  '田':['竖','横折','横','竖','横','横'],
+  '天':['横','横','撇','捺'],
+  '土':['横','竖','横'],
+  '王':['横','横','竖','横'],
+  '中':['竖','横折','横','竖'],
+  '心':['点','卧钩','点','点'],
+  '女':['撇点','撇','横'],
+  '子':['横撇','竖钩','横'],
+  '白':['撇','竖','横折','横','横'],
+  '红':['撇折','撇折','提','横','竖折折钩','横'],
+  '花':['横','竖、撇','撇','竖弯钩','撇','竖弯钩'],
+  '草':['横、竖、撇','横、竖、撇','竖','横折','横','横','竖'],
+  '鸟':['撇','横折钩','点','竖折折钩','横'],
+  '马':['横折','竖折折钩','横'],
+  '鱼':['撇','横撇','竖','横折','横','竖','横','横'],
+  '虫':['竖','横折','横','竖','提','点'],
+  '云':['横','横','撇折','点'],
+  '雨':['横','竖','横折钩','点','点、点、点、点'],
+  '风':['撇','横折弯钩','撇','点'],
+  '开':['横','横','撇','竖'],
+  '了':['横钩','竖钩'],
+  '高':['点','横','竖','横折','横','竖、横折','横','竖、横折','横'],
+  '多':['撇','横撇','点','撇','横撇','点'],
+  '来':['横','点、撇','横','竖、撇','捺'],
+  '去':['横','竖','横','撇','捺'],
+  '走':['横','竖','横','竖','横','撇','捺'],
+  '跑':['足','口','口','竖','横折','横','横','撇','横折钩','横','横','竖弯钩'],
+  '飞':['横折弯钩','撇','点'],
+  '看':['撇','横','横','撇','横折','横','横','横'],
+  '说':['点、横折提','点','撇','竖','横折','横','撇','竖弯钩','横','撇','竖弯钩','横'],
+  '话':['点、横折提','撇','横','竖','横折','横','撇、口','横折','横'],
+  '爱':['撇','点','点','撇','横撇','撇','捺','点','横、撇','点','横','撇','捺'],
+  '爸':['撇','捺','撇','横','撇','竖弯钩'],
+  '妈':['撇点','撇','横','撇、横折提','横','横','横'],
+  '爷':['撇','点','撇','捺','横折钩','横','横'],
+  '奶':['撇点','撇','横','撇','横折','横','横','横'],
+  '哥':['横','竖','横折','横','竖','横折','横','竖','竖弯钩','横'],
+  '姐':['撇点','撇','横','竖','横折','横','横','横','竖','横折','横','横'],
+  '弟':['点','撇','横折','横、竖折折钩','撇','竖折折钩','竖','撇','点'],
+  '妹':['撇点','撇','横','横','横','竖','撇','捺'],
+  '我':['撇','横','竖钩','提','斜钩','撇','点'],
+  '你':['撇','竖','撇、横钩','竖','撇、点','横','撇','点'],
+  '他':['撇','竖','横折钩','竖','横折钩','横','竖弯钩'],
+  '她':['撇点','撇','横','横折钩','竖','横折钩','横','竖弯钩'],
+  '们':['撇','竖','点','竖','横折','横'],
+  '的':['撇','竖','横折','横','横','撇','横折','横','撇','竖弯钩','点'],
+  '几':['撇','横折弯钩'],
+  '几':['撇','横折弯钩'],
+};
+
+// 笔画名称对应的简单符号/颜色提示
+function getCharStrokes(char){
+  if(STROKE_DATA[char]) return STROKE_DATA[char];
+  // 没有数据，返回空
+  return [];
+}
+
+// 笔顺文字描述
+function getStrokeOrderText(char){
+  var strokes = getCharStrokes(char);
+  if(strokes.length === 0) return '';
+  return '笔顺：' + strokes.join(' → ');
+}
+
+// ===================== 田字格手写 Canvas =====================
+var tianziCtxs = {};  // 存储每个canvas的context和绘制状态
+
+function initTianziCanvas(){
+  var canvases = document.querySelectorAll('canvas[id^="tianziCanvas"]');
+  canvases.forEach(function(cv){
+    var idx = cv.dataset.idx;
+    var char = cv.dataset.char;
+    if(tianziCtxs[idx]) return; // 已初始化
+    
+    var ctx = cv.getContext('2d');
+    // 画田字格虚线
+    drawTianziGrid(ctx, cv.width, cv.height);
+    
+    var drawing = false;
+    var lastX = 0, lastY = 0;
+    var hasContent = false;
+    
+    function getPos(e){
+      var rect = cv.getBoundingClientRect();
+      var x, y;
+      if(e.touches && e.touches.length > 0){
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+      }
+      // 缩放到canvas尺寸
+      x = x * (cv.width / rect.width);
+      y = y * (cv.height / rect.height);
+      return {x:x, y:y};
+    }
+    
+    function start(e){
+      e.preventDefault();
+      drawing = true;
+      var p = getPos(e);
+      lastX = p.x; lastY = p.y;
+      hasContent = true;
+    }
+    function move(e){
+      if(!drawing) return;
+      e.preventDefault();
+      var p = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      lastX = p.x; lastY = p.y;
+    }
+    function end(e){
+      e.preventDefault();
+      drawing = false;
+    }
+    
+    cv.addEventListener('touchstart', start, {passive:false});
+    cv.addEventListener('touchmove', move, {passive:false});
+    cv.addEventListener('touchend', end, {passive:false});
+    cv.addEventListener('mousedown', start);
+    cv.addEventListener('mousemove', move);
+    cv.addEventListener('mouseup', end);
+    cv.addEventListener('mouseleave', end);
+    
+    tianziCtxs[idx] = {ctx:ctx, canvas:cv, char:char, hasContent:false};
+  });
+}
+
+function drawTianziGrid(ctx, w, h){
+  ctx.clearRect(0, 0, w, h);
+  // 背景
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, w, h);
+  // 虚线十字
+  ctx.strokeStyle = '#D4A0B8';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  // 竖线
+  ctx.beginPath();
+  ctx.moveTo(w/2, 0);
+  ctx.lineTo(w/2, h);
+  ctx.stroke();
+  // 横线
+  ctx.beginPath();
+  ctx.moveTo(0, h/2);
+  ctx.lineTo(w, h/2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // 对角线（浅色）
+  ctx.strokeStyle = '#F0D8E0';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([2, 2]);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(w, h);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(w, 0);
+  ctx.lineTo(0, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function clearTianzi(idx){
+  var data = tianziCtxs[idx];
+  if(data){
+    drawTianziGrid(data.ctx, data.canvas.width, data.canvas.height);
+    data.hasContent = false;
+    var fb = document.getElementById('tianziFb' + idx);
+    if(fb) fb.textContent = '';
+  }
+}
+
+// 渲染任务后初始化田字格
+var _origRenderTasks = renderTasks;
+renderTasks = function(){
+  _origRenderTasks.apply(this, arguments);
+  setTimeout(function(){
+    initTianziCanvas();
+  }, 100);
+};
+
+// 汉字配对游戏 - 选择图片
+var chnSelectedImg = -1;  // 当前选中的图片索引
+var chnSelectedImgMatch = -1; // 当前选中图片对应的字索引
+function selectChnImg(gameId, imgIdx, matchIdx){
+  // 清除之前选中
+  for(var i=0; i<6; i++){
+    var el = document.getElementById(gameId + '_img_' + i);
+    if(el){
+      el.querySelector('div').style.borderColor = 'transparent';
+      el.querySelector('div').style.background = '#E8F5E9';
+    }
+    var cel = document.getElementById(gameId + '_char_' + i);
+    if(cel){
+      cel.style.borderColor = 'transparent';
+    }
+  }
+  // 高亮当前图片
+  var curImg = document.getElementById(gameId + '_img_' + imgIdx);
+  if(curImg){
+    curImg.querySelector('div').style.borderColor = '#4D96FF';
+    curImg.querySelector('div').style.background = '#E3F2FD';
+  }
+  chnSelectedImg = imgIdx;
+  chnSelectedImgMatch = matchIdx;
+}
+
+// 汉字配对游戏 - 选择汉字
+function selectChnChar(gameId, charIdx, char){
+  // 显示象形说明
+  var picto = getCharPictogram(char);
+  var pictoBox = document.getElementById(gameId + '_picto');
+  if(pictoBox){
+    pictoBox.innerHTML = '<div style="font-size:36px;margin-bottom:4px">' + picto.emoji + '</div>' +
+      '<div style="font-size:13px;color:#666;line-height:1.5">' + picto.desc + '</div>';
+  }
+  
+  // 如果还没选图片，只显示象形
+  if(chnSelectedImgMatch === -1){
+    var charEl = document.getElementById(gameId + '_char_' + charIdx);
+    if(charEl){
+      charEl.style.borderColor = '#FF6B9D';
+      setTimeout(function(){ charEl.style.borderColor = 'transparent'; }, 1000);
+    }
+    return;
+  }
+  
+  // 检查是否配对正确
+  var resultEl = document.getElementById(gameId + '_result');
+  var charEl = document.getElementById(gameId + '_char_' + charIdx);
+  var imgEl = document.getElementById(gameId + '_img_' + chnSelectedImg);
+  
+  if(charIdx === chnSelectedImgMatch){
+    // 配对成功！
+    if(charEl) { charEl.style.borderColor = '#6BCB77'; charEl.style.background = '#E8F5E9'; }
+    if(imgEl) { imgEl.querySelector('div').style.borderColor = '#6BCB77'; imgEl.querySelector('div').style.background = '#E8F5E9'; }
+    if(resultEl){
+      resultEl.innerHTML = '<div style="text-align:center;padding:8px;background:#E8F5E9;border-radius:10px;color:#2E7D32;font-weight:700">🎉 配对成功！好棒！</div>';
+    }
+    // 检查是否全部配对
+    checkChnGameComplete(gameId, 3);
+  } else {
+    // 配对失败
+    if(charEl) charEl.style.borderColor = '#FF6B9D';
+    if(resultEl){
+      resultEl.innerHTML = '<div style="text-align:center;padding:8px;background:#FFF3E0;border-radius:10px;color:#FF6B9D">再试试看～</div>';
+    }
+    setTimeout(function(){
+      if(charEl) charEl.style.borderColor = 'transparent';
+      if(resultEl) resultEl.innerHTML = '';
+    }, 1500);
+  }
+  
+  // 重置选中
+  chnSelectedImg = -1;
+  chnSelectedImgMatch = -1;
+}
+
+// 检查配对游戏是否全部完成
+function checkChnGameComplete(gameId, total){
+  var matched = 0;
+  for(var i=0; i<total; i++){
+    var el = document.getElementById(gameId + '_char_' + i);
+    if(el && el.style.borderColor === '#6BCB77' || el && el.style.borderColor === 'rgb(107, 203, 119)') matched++;
+  }
+  if(matched >= total){
+    setTimeout(function(){
+      showCelebrate('🏆', '全部配对成功！', '你真是个识字小天才！+1⭐');
+      state.stars += 1;
+      saveState();
+      renderReward();
+    }, 500);
+  }
+}
+
+// ===================== 数学题（每天3道，按家长选的难度） =====================
+function getMathRange(){
+  var level = localStorage.getItem('tuanzi_math_level') || '10';
+  return parseInt(level);
+}
+
+function generateMathQs(){
+  var range = getMathRange();
+  var questions = [];
+  for(var i=0; i<3; i++){
+    var ops = ['+','-'];
+    var op = ops[Math.floor(Math.random()*ops.length)];
+    var a, b;
+    if(op === '+'){
+      // 加法：a+b 不超过 range
+      a = Math.floor(Math.random()*(range-1))+1;
+      b = Math.floor(Math.random()*(range-a))+1;
+    } else {
+      // 减法：a 不超过 range，b < a
+      a = Math.floor(Math.random()*(range-1))+2;
+      b = Math.floor(Math.random()*(a-1))+1;
+    }
+    questions.push({a:a, b:b, op:op, answer: op==='+' ? a+b : a-b});
+  }
+  state.currentMathQs = questions;
+  state.mathQIdx = 0;
+  state.mathDone = 0;
+  saveState();
+}
+
+function checkMath(){
+  var input = document.getElementById('mathAns');
+  var fb = document.getElementById('mathFeedback');
+  if(!input || !fb) return;
+  var ans = parseInt(input.value);
+  if(isNaN(ans)) return;
+  
+  var curIdx = state.mathQIdx || 0;
+  var q = state.currentMathQs[curIdx];
+  
+  if(ans === q.answer){
+    state.mathDone = (state.mathDone || 0) + 1;
+    fb.textContent = '✅ 答对了！真棒！';
+    fb.style.color = '#6BCB77';
+    saveState();
+    
+    // 3道全答对，完成任务
+    if(state.mathDone >= 3){
+      var rec = getTodayRecord();
+      if(!rec.math){
+        rec.math = true;
+        giveFoodReward('math');
+        saveState();
+      }
+      setTimeout(function(){
+        renderTasks(); renderFood(); renderReward(); renderPet();
+      }, 1000);
+      return;
+    }
+    
+    // 还有下一题
+    state.mathQIdx = curIdx + 1;
+    saveState();
+    setTimeout(function(){
+      renderTasks();
+      // 自动聚焦到输入框
+      setTimeout(function(){
+        var newInput = document.getElementById('mathAns');
+        if(newInput) newInput.focus();
+      }, 100);
+    }, 800);
+  } else {
+    fb.textContent = '❌ 再想想看~';
+    fb.style.color = '#FF6B9D';
+    setTimeout(function(){ input.value=''; fb.textContent=''; }, 1500);
+  }
+}
+
+// ===================== 日历 =====================
+function renderCalendar(){
+  const year = state.calYear;
+  const month = state.calMonth;
+  document.getElementById('calMonthTitle').textContent = `${year}年${month+1}月`;
+  
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = new Date();
+  const todayKeyStr = todayKey();
+  
+  let html = '';
+  // 空白
+  for(let i=0; i<firstDay; i++) html += '<div class="cal-cell" style="visibility:hidden"></div>';
+  
+  for(let d=1; d<=daysInMonth; d++){
+    const date = new Date(year, month, d);
+    const key = getDateKey(date);
+    const rec = state.taskRecords[key];
+    const isToday = key === todayKeyStr;
+    const isFuture = date > today;
+    
+    let cls = 'cal-cell';
+    let badge = '';
+    
+    if(isToday) cls += ' today';
+    if(isFuture){ cls += ' future'; }
+    
+    if(rec){
+      // 有记录，检查是否全完成
+      const tasks = (date.getDay()===0||date.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+      const allDone = tasks.every(t => rec[t.id]);
+      if(allDone){
+        cls += ' completed';
+      }
+    }
+    
+    html += `<div class="${cls}">${d}${badge}</div>`;
+  }
+  
+  document.getElementById('calGrid').innerHTML = html;
+  
+  // 连续打卡天数
+  let streak = 0;
+  let checkDate = new Date(today);
+  while(true){
+    const key = getDateKey(checkDate);
+    const rec = state.taskRecords[key];
+    if(rec){
+      const tasks = (checkDate.getDay()===0||checkDate.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+      const allDone = tasks.every(t => rec[t.id]);
+      if(allDone){
+        streak++;
+        checkDate.setDate(checkDate.getDate()-1);
+      } else break;
+    } else break;
+  }
+  
+  const totalDays = Object.keys(state.taskRecords).filter(k => {
+    const rec = state.taskRecords[k];
+    const d = new Date(k);
+    const tasks = (d.getDay()===0||d.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+    return tasks.every(t => rec[t.id]);
+  }).length;
+  
+  document.getElementById('calStreakInfo').innerHTML = `🔥 连续打卡 <b>${streak}</b> 天 · 累计完成 <b>${totalDays}</b> 天`;
+}
+
+function changeMonth(dir){
+  state.calMonth += dir;
+  if(state.calMonth < 0){ state.calMonth = 11; state.calYear--; }
+  if(state.calMonth > 11){ state.calMonth = 0; state.calYear++; }
+  renderCalendar();
+}
+
+// ===================== 备忘录 =====================
+function renderMemos(){
+  const list = document.getElementById('memoList');
+  list.innerHTML = state.memos.map(g => `
+    <div class="memo-group">
+      <div class="memo-group-header">
+        <span class="memo-group-name">${g.name}</span>
+        <span class="memo-del" onclick="delMemoGroup('${g.id}')">🗑️</span>
+      </div>
+      ${g.items.map(item => `
+        <div class="memo-item ${item.done?'done':''}" onclick="toggleMemo('${g.id}','${item.id}')">
+          <div class="memo-check">${item.done?'✓':''}</div>
+          <div class="memo-text">${item.text}</div>
+          <span class="memo-del" onclick="event.stopPropagation();delMemoItem('${g.id}','${item.id}')">×</span>
+        </div>
+      `).join('')}
+      <div class="memo-add-row">
+        <input type="text" placeholder="添加备忘..." onkeydown="if(event.key==='Enter')addMemoItem('${g.id}',this.value,this)">
+        <button onclick="addMemoItem('${g.id}',document.querySelector('#memoList input[data-gid=\\'${g.id}\\']')?.value||'')">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleMemo(gid, iid){
+  const g = state.memos.find(x => x.id === gid);
+  if(!g) return;
+  const item = g.items.find(x => x.id === iid);
+  if(!g) return;
+  const item2 = g.items.find(x => x.id === iid);
+  if(item2) item2.done = !item2.done;
+  saveState();
+  renderMemos();
+}
+
+function addMemoItem(gid, val, inputEl){
+  if(!val.trim()) return;
+  const g = state.memos.find(x => x.id === gid);
+  if(!g) return;
+  g.items.push({id:'i'+Date.now(), text:val.trim(), done:false});
+  saveState();
+  renderMemos();
+}
+
+function delMemoItem(gid, iid){
+  const g = state.memos.find(x => x.id === gid);
+  if(!g) return;
+  g.items = g.items.filter(x => x.id !== iid);
+  saveState();
+  renderMemos();
+}
+
+function addMemoGroup(){
+  const name = document.getElementById('newGroupName').value.trim();
+  if(!name) return;
+  state.memos.push({id:'g'+Date.now(), name, items:[]});
+  document.getElementById('newGroupName').value = '';
+  saveState();
+  renderMemos();
+}
+
+function delMemoGroup(gid){
+  if(!confirm('确定删除整个分组吗？')) return;
+  state.memos = state.memos.filter(x => x.id !== gid);
+  saveState();
+  renderMemos();
+}
+
+// ===================== 奖励中心 =====================
+function renderReward(){
+  const lv = getPetLevel();
+  const stage = PET_STAGES[lv.stage];
+  document.getElementById('rcPetName').textContent = state.petName;
+  document.getElementById('rcPetStage').textContent = `${stage.name}（第${lv.stage+1}阶段）`;
+  document.getElementById('rcPetLevel').textContent = `Lv.${lv.level}`;
+  document.getElementById('rcTotalExp').textContent = state.totalExp;
+  document.getElementById('rcStars').textContent = state.stars;
+  document.getElementById('rcApple').textContent = state.foods.apple || 0;
+  document.getElementById('rcCarrot').textContent = state.foods.carrot || 0;
+  document.getElementById('rcCake').textContent = state.foods.cake || 0;
+  document.getElementById('rcDecorCount').textContent = state.decors.length + '/' + ALL_DECORS.length;
+  
+  let streak = 0;
+  let checkDate = new Date();
+  while(true){
+    const key = getDateKey(checkDate);
+    const rec = state.taskRecords[key];
+    if(rec){
+      const tasks = (checkDate.getDay()===0||checkDate.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+      if(tasks.every(t => rec[t.id])) { streak++; checkDate.setDate(checkDate.getDate()-1); }
+      else break;
+    } else break;
+  }
+  document.getElementById('rcStreak').textContent = streak;
+  
+  const totalDays = Object.keys(state.taskRecords).filter(k => {
+    const rec = state.taskRecords[k];
+    const d = new Date(k);
+    const tasks = (d.getDay()===0||d.getDay()===6) ? WEEKEND_TASKS : WEEKDAY_TASKS;
+    return tasks.every(t => rec[t.id]);
+  }).length;
+  document.getElementById('rcTotalDays').textContent = totalDays;
+}
+
+// ===================== 庆祝弹窗 =====================
+function showCelebrate(emoji, title, desc){
+  document.getElementById('celebrateEmoji').textContent = emoji;
+  document.getElementById('celebrateTitle').textContent = title;
+  document.getElementById('celebrateDesc').textContent = desc;
+  document.getElementById('celebrateOverlay').classList.add('show');
+  // 撒彩纸
+  for(let i=0; i<25; i++){
+    setTimeout(() => createConfetti(), i*30);
+  }
+}
+function closeCelebrate(){
+  document.getElementById('celebrateOverlay').classList.remove('show');
+}
+function createConfetti(){
+  const colors = ['#FF6B9D','#FFD93D','#6BCB77','#4D96FF','#B983FF','#FF9F45'];
+  const c = document.createElement('div');
+  c.className = 'confetti';
+  c.style.left = Math.random()*100 + 'vw';
+  c.style.background = colors[Math.floor(Math.random()*colors.length)];
+  c.style.borderRadius = Math.random()>0.5 ? '50%' : '0';
+  c.style.animation = `confettiFall ${1.5+Math.random()}s linear forwards`;
+  document.body.appendChild(c);
+  setTimeout(() => c.remove(), 3000);
+}
+
+// ===================== 工具函数 =====================
+function shuffleArray(arr){
+  const a = [...arr];
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ===================== Tab 切换 =====================
+document.querySelector('.tab-bar').addEventListener('click', function(e){
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  const page = btn.dataset.page;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if(page === 'calendar') renderCalendar();
+  if(page === 'memo') renderMemos();
+  if(page === 'reward') renderReward();
+  if(page === 'home') { renderPet(); renderFood(); renderDecors(); }
+  if(page === 'tasks') renderTasks();
+  if(page === 'parent') renderParent();
+});
+
+// ===================== 初始化 =====================
+function showDate(){
+  const days = ['日','一','二','三','四','五','六'];
+  const now = new Date();
+  document.getElementById('todayDate').textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${days[now.getDay()]}`;
+}
+
+// 启动
+// 清除旧缓存确保字母从A开始
+try {
+  var old = localStorage.getItem('tuanzi_state');
+  if(old){
+    var parsed = JSON.parse(old);
+    parsed.currentLetterIdx = 0;
+    localStorage.setItem('tuanzi_state', JSON.stringify(parsed));
+  }
+}catch(e){}
+loadState();
+
+// 拼音和象形数据已内置在前端，无需服务器加载
+// 直接渲染任务即可
+renderTasks();
+
+showDate();
+renderPet();
+renderFood();
+renderDecors();
+renderTasks();
+renderMemos();
+renderReward();
+renderParent();
+</script>
+</body>
+</html>
